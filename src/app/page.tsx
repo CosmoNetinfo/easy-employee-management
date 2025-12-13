@@ -1,0 +1,74 @@
+'use client';
+import Link from 'next/link';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+export default function Home() {
+  const [code, setCode] = useState('');
+  const [error, setError] = useState('');
+  const router = useRouter();
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code }),
+      });
+
+      if (res.ok) {
+        const user = await res.json();
+        localStorage.setItem('user', JSON.stringify(user));
+        if (user.role === 'ADMIN') {
+          router.push('/admin');
+        } else {
+          router.push('/dashboard');
+        }
+      } else {
+        const data = await res.json();
+        setError(data.error || 'Login fallito');
+      }
+    } catch (err) {
+      setError('Errore di connessione');
+    }
+  };
+
+  return (
+    <main className="container">
+      <div className="glass card animate-fade-in" style={{ textAlign: 'center' }}>
+        <h1>Timbra Cartellino</h1>
+        <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>
+          Work Tracker App
+        </p>
+
+        <form onSubmit={handleLogin} style={{ marginBottom: '2rem' }}>
+          <div style={{ textAlign: 'left', marginBottom: '1rem' }}>
+            <label className="label">Codice Personale</label>
+            <input
+              type="text"
+              placeholder="Inserisci il tuo codice..."
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+            />
+          </div>
+
+          {error && <p style={{ color: 'var(--danger)', marginBottom: '1rem' }}>{error}</p>}
+
+          <button type="submit" className="btn btn-primary">
+            Accedi
+          </button>
+        </form>
+
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
+          <p style={{ marginBottom: '1rem', fontSize: '0.9rem' }}>Non hai un account?</p>
+          <Link href="/register" style={{ color: 'var(--primary)', textDecoration: 'none', fontWeight: 600 }}>
+            Registrati come Nuovo Operaio
+          </Link>
+        </div>
+      </div>
+    </main>
+  );
+}
