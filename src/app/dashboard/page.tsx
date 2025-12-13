@@ -8,9 +8,7 @@ export default function Dashboard() {
     const [status, setStatus] = useState<'IN' | 'OUT' | 'LOADING'>('LOADING');
     const [lastEntry, setLastEntry] = useState<any>(null);
     const [loading, setLoading] = useState(false);
-    const [cameraActive, setCameraActive] = useState(false);
-    const videoRef = useRef<HTMLVideoElement>(null);
-    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [cameraActive, setCameraActive] = useState(false); // Kept for logic compatibility but unused visually
 
     useEffect(() => {
         const stored = localStorage.getItem('user');
@@ -145,48 +143,36 @@ export default function Dashboard() {
                 {status !== 'LOADING' && (
                     <div style={{ display: 'grid', gap: '1rem' }}>
                         {!cameraActive ? (
-                            <button
-                                onClick={startCamera}
-                                className="btn"
-                                style={{ fontSize: '1.2rem', padding: '1.5rem', background: 'var(--primary)' }}
-                            >
-                                {status === 'OUT' ? 'TIMBRA ENTRATA' : 'TIMBRA USCITA'}
-                            </button>
-                        ) : (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
-                                <div style={{
-                                    width: '100%',
-                                    maxWidth: '400px',
-                                    aspectRatio: '16/9',
-                                    background: 'black',
-                                    borderRadius: '12px',
-                                    overflow: 'hidden',
-                                    border: '2px solid var(--primary)'
-                                }}>
-                                    <video
-                                        ref={videoRef}
-                                        autoPlay
-                                        playsInline
-                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                    />
-                                    <canvas ref={canvasRef} style={{ display: 'none' }} />
-                                </div>
-                                <button
-                                    onClick={() => handleClock(status === 'OUT' ? 'IN' : 'OUT')}
-                                    className={`btn ${status === 'OUT' ? 'btn-success' : 'btn-danger'}`}
-                                    style={{ fontSize: '1.2rem', padding: '1rem 3rem' }}
+                            <>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    capture="environment"
+                                    id="cameraInput"
+                                    style={{ display: 'none' }}
+                                    onChange={(e) => {
+                                        if (e.target.files && e.target.files[0]) {
+                                            handleNativeClock(status === 'OUT' ? 'IN' : 'OUT', e.target.files[0]);
+                                        }
+                                    }}
                                     disabled={loading}
+                                />
+                                <label
+                                    htmlFor="cameraInput"
+                                    className="btn"
+                                    style={{
+                                        fontSize: '1.2rem',
+                                        padding: '1.5rem',
+                                        background: 'var(--primary)',
+                                        display: 'block',
+                                        cursor: loading ? 'wait' : 'pointer',
+                                        opacity: loading ? 0.7 : 1
+                                    }}
                                 >
-                                    {loading ? 'Attendere...' : 'SCATTA E CONFERMA'}
-                                </button>
-                                <button
-                                    onClick={stopCamera}
-                                    style={{ background: 'transparent', color: 'var(--text-muted)', border: 'none', marginTop: '0.5rem' }}
-                                >
-                                    Annulla
-                                </button>
-                            </div>
-                        )}
+                                    {loading ? 'CARICAMENTO...' : (status === 'OUT' ? 'SCATTA FOTO ENTRATA 📸' : 'SCATTA FOTO USCITA 📸')}
+                                </label>
+                            </>
+                        ) : null}
                     </div>
                 )}
             </div>
