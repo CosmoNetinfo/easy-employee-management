@@ -1,13 +1,13 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function Dashboard() {
-    const router = useRouter();
     const [user, setUser] = useState<any>(null);
-    const [status, setStatus] = useState<'IN' | 'OUT' | 'LOADING'>('LOADING');
+    const [status, setStatus] = useState('LOADING'); // IN, OUT, LOADING
     const [lastEntry, setLastEntry] = useState<any>(null);
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         const stored = localStorage.getItem('user');
@@ -15,19 +15,17 @@ export default function Dashboard() {
             router.push('/');
             return;
         }
-        const userData = JSON.parse(stored);
-        setUser(userData);
-        fetchStatus(userData.id);
+        const parsedUser = JSON.parse(stored);
+        setUser(parsedUser);
+        fetchStatus(parsedUser.id);
     }, []);
 
-    const fetchStatus = async (id: number) => {
+    const fetchStatus = async (userId: number) => {
         try {
-            const res = await fetch(`/api/status?userId=${id}`);
-            if (res.ok) {
-                const data = await res.json();
-                setStatus(data.status);
-                setLastEntry(data.lastEntry);
-            }
+            const res = await fetch(`/api/status?userId=${userId}`);
+            const data = await res.json();
+            setStatus(data.status); // IN or OUT
+            setLastEntry(data.lastEntry);
         } catch (e) {
             console.error(e);
         }
@@ -38,13 +36,13 @@ export default function Dashboard() {
         setLoading(true);
 
         try {
-            // Compress Image
+            // Compress Image - ULTRA FAST MODE
             const compressedFile = await new Promise<File>((resolve) => {
                 const img = new Image();
                 img.src = URL.createObjectURL(file);
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 600; // Aggressive resize for storage efficiency
+                    const MAX_WIDTH = 300; // Ultra-fast resize (Thumbnail size ~15KB)
                     const scaleSize = MAX_WIDTH / img.width;
 
                     // Only resize if wider than MAX_WIDTH
@@ -65,7 +63,7 @@ export default function Dashboard() {
                         } else {
                             resolve(file); // Fallback
                         }
-                    }, 'image/jpeg', 0.5); // 50% quality is enough for proof
+                    }, 'image/jpeg', 0.4); // 40% quality - SPEED PRIORITY
                 };
                 img.onerror = () => resolve(file); // Fallback on error
             });
@@ -82,7 +80,8 @@ export default function Dashboard() {
 
             if (res.ok) {
                 await fetchStatus(user.id);
-                alert('Timbratura registrata con successo!');
+                // alert('Timbratura registrata con successo!'); // Optional: remove alert for speed? keeping it for feedback
+                alert('Fatto! Timbratura inviata.');
             } else {
                 alert('Errore timbratura');
             }
@@ -143,20 +142,44 @@ export default function Dashboard() {
                             }}
                             disabled={loading}
                         />
-                        <label
-                            htmlFor="cameraInput"
-                            className={`btn ${status === 'OUT' ? 'btn-success' : 'btn-danger'}`}
-                            style={{
-                                fontSize: '1.2rem',
-                                padding: '1.5rem',
-                                display: 'block',
-                                cursor: loading ? 'wait' : 'pointer',
-                                opacity: loading ? 0.7 : 1,
-                                background: status === 'OUT' ? 'var(--success)' : 'var(--danger)'
-                            }}
-                        >
-                            {loading ? 'CARICAMENTO...' : (status === 'OUT' ? 'SCATTA FOTO ENTRATA 📸' : 'SCATTA FOTO USCITA 📸')}
-                        </label>
+
+                        {status === 'OUT' ? (
+                            <button
+                                onClick={() => document.getElementById('cameraInput')?.click()}
+                                className="btn btn-primary"
+                                style={{
+                                    padding: '1.5rem',
+                                    fontSize: '1.2rem',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    gap: '1rem',
+                                    background: 'var(--success)'
+                                }}
+                                disabled={loading}
+                            >
+                                <span style={{ fontSize: '1.5rem' }}>📸</span>
+                                {loading ? 'Invio in corso...' : 'SCATTA FOTO ENTRATA'}
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => document.getElementById('cameraInput')?.click()}
+                                className="btn"
+                                style={{
+                                    padding: '1.5rem',
+                                    fontSize: '1.2rem',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    gap: '1rem',
+                                    background: 'var(--danger)'
+                                }}
+                                disabled={loading}
+                            >
+                                <span style={{ fontSize: '1.5rem' }}>📸</span>
+                                {loading ? 'Invio in corso...' : 'SCATTA FOTO USCITA'}
+                            </button>
+                        )}
                     </div>
                 )}
             </div>
