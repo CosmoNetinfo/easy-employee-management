@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // Uses connection pooling
+  directUrl = env("DIRECT_URL") // Uses direct connection
 }
 
 model User {
@@ -22,4 +23,5 @@ model Entry {
   user      User     @relation(fields: [userId], references: [id])
   type      String
   timestamp DateTime @default(now())
+  photoUrl  String?
 }

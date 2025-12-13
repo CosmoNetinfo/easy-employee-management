@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function Dashboard() {
@@ -8,6 +8,9 @@ export default function Dashboard() {
     const [status, setStatus] = useState<'IN' | 'OUT' | 'LOADING'>('LOADING');
     const [lastEntry, setLastEntry] = useState<any>(null);
     const [loading, setLoading] = useState(false);
+    const [cameraActive, setCameraActive] = useState(false);
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
         const stored = localStorage.getItem('user');
@@ -33,29 +36,75 @@ export default function Dashboard() {
         }
     };
 
-    const handleClock = async (type: 'IN' | 'OUT') => {
-        if (!user) return;
-        setLoading(true);
+    const startCamera = async () => {
+        setCameraActive(true);
         try {
-            const res = await fetch('/api/clock', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: user.id, type }),
-            });
-
-            if (res.ok) {
-                await fetchStatus(user.id);
-            } else {
-                alert('Errore timbratura');
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            if (videoRef.current) {
+                videoRef.current.srcObject = stream;
             }
-        } catch (e) {
-            alert('Errore di connessione');
-        } finally {
-            setLoading(false);
+        } catch (err) {
+            console.error("Error accessing camera", err);
+            alert("Impossibile accedere alla fotocamera. Assicurati di aver dato i permessi.");
+            setCameraActive(false);
         }
     };
 
+    const stopCamera = () => {
+        if (videoRef.current && videoRef.current.srcObject) {
+            const stream = videoRef.current.srcObject as MediaStream;
+            stream.getTracks().forEach(track => track.stop());
+            videoRef.current.srcObject = null;
+        }
+        setCameraActive(false);
+    };
+
+    const handleClock = async (type: 'IN' | 'OUT') => {
+        if (!user || !videoRef.current || !canvasRef.current) return;
+        setLoading(true);
+
+        // Capture image
+        const video = videoRef.current;
+        const canvas = canvasRef.current;
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        canvas.toBlob(async (blob) => {
+            if (!blob) {
+                setLoading(false);
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('userId', user.id);
+            formData.append('type', type);
+            formData.append('image', blob, 'capture.jpg');
+
+            try {
+                const res = await fetch('/api/clock', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (res.ok) {
+                    await fetchStatus(user.id);
+                    stopCamera(); // Close camera after success
+                } else {
+                    alert('Errore timbratura');
+                }
+            } catch (e) {
+                alert('Errore di connessione');
+            } finally {
+                setLoading(false);
+            }
+        }, 'image/jpeg');
+    };
+
     const handleLogout = () => {
+        stopCamera();
         localStorage.removeItem('user');
         router.push('/');
     };
@@ -90,24 +139,48 @@ export default function Dashboard() {
 
                 {status !== 'LOADING' && (
                     <div style={{ display: 'grid', gap: '1rem' }}>
-                        {status === 'OUT' ? (
+                        {!cameraActive ? (
                             <button
-                                onClick={() => handleClock('IN')}
-                                className="btn btn-success"
-                                style={{ fontSize: '1.5rem', padding: '2rem' }}
-                                disabled={loading}
+                                onClick={startCamera}
+                                className="btn"
+                                style={{ fontSize: '1.2rem', padding: '1.5rem', background: 'var(--primary)' }}
                             >
-                                TIMBRA ENTRATA
+                                {status === 'OUT' ? 'TIMBRA ENTRATA' : 'TIMBRA USCITA'}
                             </button>
                         ) : (
-                            <button
-                                onClick={() => handleClock('OUT')}
-                                className="btn btn-danger"
-                                style={{ fontSize: '1.5rem', padding: '2rem' }}
-                                disabled={loading}
-                            >
-                                TIMBRA USCITA
-                            </button>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
+                                <div style={{
+                                    width: '100%',
+                                    maxWidth: '400px',
+                                    aspectRatio: '16/9',
+                                    background: 'black',
+                                    borderRadius: '12px',
+                                    overflow: 'hidden',
+                                    border: '2px solid var(--primary)'
+                                }}>
+                                    <video
+                                        ref={videoRef}
+                                        autoPlay
+                                        playsInline
+                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                    />
+                                    <canvas ref={canvasRef} style={{ display: 'none' }} />
+                                </div>
+                                <button
+                                    onClick={() => handleClock(status === 'OUT' ? 'IN' : 'OUT')}
+                                    className={`btn ${status === 'OUT' ? 'btn-success' : 'btn-danger'}`}
+                                    style={{ fontSize: '1.2rem', padding: '1rem 3rem' }}
+                                    disabled={loading}
+                                >
+                                    {loading ? 'Attendere...' : 'SCATTA E CONFERMA'}
+                                </button>
+                                <button
+                                    onClick={stopCamera}
+                                    style={{ background: 'transparent', color: 'var(--text-muted)', border: 'none', marginTop: '0.5rem' }}
+                                >
+                                    Annulla
+                                </button>
+                            </div>
                         )}
                     </div>
                 )}

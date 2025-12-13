@@ -1,5 +1,5 @@
 {
-  "name": "work-tracker",
+  "name": "easy-employee-management",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@prisma/client": "^5.22.0",
     "next": "16.0.10",
     "react": "19.2.1",
     "react-dom": "19.2.1"
@@ -19,6 +20,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.0.10",
+    "prisma": "^5.22.0",
     "typescript": "^5"
   }
 }
