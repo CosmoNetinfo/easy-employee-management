@@ -39,7 +39,12 @@ export default function Dashboard() {
     const startCamera = async () => {
         setCameraActive(true);
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            // Try to get the environment (rear) camera, fallback to any video source
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: 'environment' // Prefer rear camera
+                }
+            });
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
             }
