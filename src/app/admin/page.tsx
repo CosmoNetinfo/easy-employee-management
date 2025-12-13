@@ -199,10 +199,33 @@ export default function Admin() {
             <div className="glass card animate-fade-in">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
                     <h2>Pannello di Controllo</h2>
-                    <button onClick={handleLogout} className="btn" style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.9rem', background: 'var(--surface)' }}>
-                        Esci
-                    </button>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <button onClick={() => setShowSettings(!showSettings)} className="btn" style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.9rem', background: 'var(--primary)' }}>
+                            {showSettings ? 'Chiudi Impostazioni' : 'Impostazioni'}
+                        </button>
+                        <button onClick={handleLogout} className="btn" style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.9rem', background: 'var(--surface)' }}>
+                            Esci
+                        </button>
+                    </div>
                 </div>
+
+                {showSettings && (
+                    <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)', marginBottom: '2rem' }}>
+                        <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem' }}>Cambia Password Admin</h3>
+                        <form onSubmit={handleUpdatePassword} style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                            <input
+                                type="text"
+                                placeholder="Nuovo Codice Admin"
+                                value={newAdminCode}
+                                onChange={(e) => setNewAdminCode(e.target.value)}
+                                style={{ padding: '0.5rem', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--background)' }}
+                            />
+                            <button type="submit" className="btn" style={{ width: 'auto', background: 'var(--success)' }}>
+                                Salva
+                            </button>
+                        </form>
+                    </div>
+                )}
 
                 {/* Summary Section */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
