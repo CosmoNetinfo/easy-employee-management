@@ -260,10 +260,26 @@ export default function Admin() {
                                     </td>
                                     <td style={{ padding: '1rem' }}>
                                         {entry.photoUrl ? (
-                                            <a href={entry.photoUrl} target="_blank" rel="noreferrer" style={{ textDecoration: 'underline', color: 'var(--primary)' }}>
-                                                Vedi Foto
+                                            <a
+                                                href={entry.photoUrl}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="btn"
+                                                style={{
+                                                    textDecoration: 'none',
+                                                    background: 'var(--primary)',
+                                                    padding: '0.5rem 1rem',
+                                                    fontSize: '0.9rem',
+                                                    display: 'inline-flex',
+                                                    alignItems: 'center',
+                                                    gap: '0.5rem'
+                                                }}
+                                            >
+                                                <span>📸</span> Apri
                                             </a>
-                                        ) : '-'}
+                                        ) : (
+                                            <span style={{ opacity: 0.3 }}>-</span>
+                                        )}
                                     </td>
                                 </tr>
                             ))}
