@@ -114,6 +114,36 @@ export default function Admin() {
         window.location.reload();
     };
 
+    const [newAdminCode, setNewAdminCode] = useState('');
+    const [showSettings, setShowSettings] = useState(false);
+
+    const handleUpdatePassword = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!newAdminCode) return;
+
+        try {
+            // Get current admin ID from localStorage
+            const stored = localStorage.getItem('user');
+            if (!stored) return;
+            const user = JSON.parse(stored);
+
+            const res = await fetch('/api/admin/update-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: user.id, newCode: newAdminCode }),
+            });
+
+            if (res.ok) {
+                alert('Password aggiornata con successo! Effettua nuovamente il login.');
+                handleLogout();
+            } else {
+                alert('Errore durante l\'aggiornamento');
+            }
+        } catch (error) {
+            alert('Errore di connessione');
+        }
+    };
+
     const summary = useMemo(() => {
         // Group entries by user
         const userEntries: Record<string, any[]> = {};
