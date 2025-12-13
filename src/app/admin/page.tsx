@@ -64,6 +64,8 @@ export default function Admin() {
         }
     };
 
+    const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
+
     const handleDelete = async (id: number) => {
         if (!confirm('Sei sicuro di voler eliminare questa timbratura?')) return;
 
@@ -276,10 +278,8 @@ export default function Admin() {
                                     </td>
                                     <td style={{ padding: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                         {entry.photoUrl ? (
-                                            <a
-                                                href={entry.photoUrl}
-                                                target="_blank"
-                                                rel="noreferrer"
+                                            <button
+                                                onClick={() => setSelectedPhoto(entry.photoUrl)}
                                                 className="btn"
                                                 style={{
                                                     textDecoration: 'none',
@@ -288,11 +288,14 @@ export default function Admin() {
                                                     fontSize: '0.9rem',
                                                     display: 'inline-flex',
                                                     alignItems: 'center',
-                                                    gap: '0.5rem'
+                                                    gap: '0.5rem',
+                                                    border: 'none',
+                                                    cursor: 'pointer',
+                                                    color: 'white'
                                                 }}
                                             >
                                                 <span>📸</span> Apri
-                                            </a>
+                                            </button>
                                         ) : (
                                             <span style={{ opacity: 0.3, padding: '0.5rem' }}>-</span>
                                         )}
@@ -325,6 +328,59 @@ export default function Admin() {
                     </table>
                     {loading && <p style={{ textAlign: 'center', padding: '2rem' }}>Caricamento...</p>}
                 </div>
+
+                {/* Photo Modal */}
+                {selectedPhoto && (
+                    <div
+                        style={{
+                            position: 'fixed',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            background: 'rgba(0,0,0,0.8)',
+                            zIndex: 1000,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            padding: '1rem',
+                            backdropFilter: 'blur(5px)'
+                        }}
+                        onClick={() => setSelectedPhoto(null)}
+                    >
+                        <div style={{ position: 'relative', maxWidth: '90%', maxHeight: '90%' }}>
+                            <img
+                                src={selectedPhoto}
+                                alt="Prova lavoro"
+                                style={{
+                                    maxWidth: '100%',
+                                    maxHeight: '90vh',
+                                    borderRadius: '8px',
+                                    boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+                                    border: '2px solid rgba(255,255,255,0.1)'
+                                }}
+                            />
+                            <button
+                                onClick={() => setSelectedPhoto(null)}
+                                style={{
+                                    position: 'absolute',
+                                    top: '-40px',
+                                    right: 0,
+                                    background: 'white',
+                                    color: 'black',
+                                    border: 'none',
+                                    borderRadius: '50%',
+                                    width: '32px',
+                                    height: '32px',
+                                    fontWeight: 'bold',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                X
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </main>
     );
