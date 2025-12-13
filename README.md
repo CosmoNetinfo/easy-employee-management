@@ -37,15 +37,21 @@ L'applicazione è ottimizzata per l'uso da smartphone, permettendo ai dipendenti
     *   Include icone personalizzate e manifest ottimizzato.
     *   Funziona anche offline (interfaccia parziale) grazie al Service Worker.
 
-## 📱 Guida all'Installazione (Android)
+## 📱 Guida all'Installazione (PWA)
 
-L'applicazione è una PWA, quindi il metodo migliore per installarla è:
+L'applicazione è una PWA, quindi si installa direttamente dal browser senza passare dagli Store.
+
+### Su Android 🤖
 1.  Aprire il link del sito su **Chrome**.
-2.  Premere i 3 puntini in alto a destra.
+2.  Premere i **3 puntini** in alto a destra.
 3.  Selezionare **"Aggiungi a schermata Home"** o **"Installa app"**.
-4.  L'icona apparirà tra le app del telefono e funzionerà a schermo intero come un'app nativa.
+4.  L'app apparirà nella lista delle applicazioni.
 
-*In alternativa è possibile generare un APK tramite servizi come WebIntoApp, assicurandosi di abilitare il permesso "Camera".*
+### Su iPhone (iOS) 🍎
+1.  Aprire il link del sito su **Safari**.
+2.  Premere il tasto **Condividi** (il quadrato con la freccia in alto) nella barra in basso.
+3.  Scorrere la lista e premere **"Aggiungi alla schermata Home"**.
+4.  Premere "Aggiungi" in alto a destra.
 
 ## 🔧 Configurazione Database (Vercel)
 
