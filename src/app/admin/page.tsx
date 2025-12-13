@@ -274,45 +274,44 @@ export default function Admin() {
                                             {entry.type === 'IN' ? 'ENTRATA' : 'USCITA'}
                                         </span>
                                     </td>
-                                    <td style={{ padding: '1rem' }}>
-                                        <td style={{ padding: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                            {entry.photoUrl ? (
-                                                <a
-                                                    href={entry.photoUrl}
-                                                    target="_blank"
-                                                    rel="noreferrer"
-                                                    className="btn"
-                                                    style={{
-                                                        textDecoration: 'none',
-                                                        background: 'var(--primary)',
-                                                        padding: '0.5rem 1rem',
-                                                        fontSize: '0.9rem',
-                                                        display: 'inline-flex',
-                                                        alignItems: 'center',
-                                                        gap: '0.5rem'
-                                                    }}
-                                                >
-                                                    <span>📸</span> Apri
-                                                </a>
-                                            ) : (
-                                                <span style={{ opacity: 0.3, padding: '0.5rem' }}>-</span>
-                                            )}
-                                            <button
-                                                onClick={() => handleDelete(entry.id)}
+                                    <td style={{ padding: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                        {entry.photoUrl ? (
+                                            <a
+                                                href={entry.photoUrl}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="btn"
                                                 style={{
-                                                    background: 'var(--danger)',
-                                                    border: 'none',
-                                                    padding: '0.5rem 0.8rem',
-                                                    borderRadius: '8px',
-                                                    cursor: 'pointer',
-                                                    color: 'white',
-                                                    fontSize: '1rem'
+                                                    textDecoration: 'none',
+                                                    background: 'var(--primary)',
+                                                    padding: '0.5rem 1rem',
+                                                    fontSize: '0.9rem',
+                                                    display: 'inline-flex',
+                                                    alignItems: 'center',
+                                                    gap: '0.5rem'
                                                 }}
-                                                title="Elimina per sempre"
                                             >
-                                                🗑️
-                                            </button>
-                                        </td>
+                                                <span>📸</span> Apri
+                                            </a>
+                                        ) : (
+                                            <span style={{ opacity: 0.3, padding: '0.5rem' }}>-</span>
+                                        )}
+                                        <button
+                                            onClick={() => handleDelete(entry.id)}
+                                            style={{
+                                                background: 'var(--danger)',
+                                                border: 'none',
+                                                padding: '0.5rem 0.8rem',
+                                                borderRadius: '8px',
+                                                cursor: 'pointer',
+                                                color: 'white',
+                                                fontSize: '1rem'
+                                            }}
+                                            title="Elimina per sempre"
+                                        >
+                                            🗑️
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                             {entries.length === 0 && !loading && (
