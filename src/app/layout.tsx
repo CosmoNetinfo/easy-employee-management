@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Easy Employee Management",
   description: "Gestione facile dei dipendenti",
-  manifest: "/manifest.webmanifest",
+  manifest: "/manifest.json",
 };
 
 export const viewport = {
