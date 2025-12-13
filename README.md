@@ -62,4 +62,5 @@ Se la fotocamera non si apre su Android:
 3.  Se si apre il selettore file, scegliere "Fotocamera" tra le opzioni.
 
 ---
-*Progetto sviluppato per CosmoNetinfo*
+---
+*Creata da **Daniele Spalletti** per [EasyEvent.it](https://easyevent.it/)*

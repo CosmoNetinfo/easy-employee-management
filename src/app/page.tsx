@@ -83,6 +83,9 @@ export default function Home() {
             Registrati come Nuovo Operaio
           </Link>
         </div>
+        <div style={{ marginTop: '3rem', fontSize: '0.8rem', opacity: 0.5 }}>
+          Creata da Daniele Spalletti per <a href="https://easyevent.it/" target="_blank" style={{ color: 'inherit', textDecoration: 'underline' }}>EasyEvent.it</a>
+        </div>
       </div>
     </main>
   );

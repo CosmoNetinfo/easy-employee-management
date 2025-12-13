@@ -128,6 +128,10 @@ export default function Dashboard() {
                     </div>
                 )}
             </div>
+            {/* Footer */}
+            <div style={{ marginTop: '3rem', textAlign: 'center', fontSize: '0.8rem', opacity: 0.5, color: 'var(--text-muted)' }}>
+                Creata da Daniele Spalletti per <a href="https://easyevent.it/" target="_blank" style={{ color: 'inherit', textDecoration: 'underline' }}>EasyEvent.it</a>
+            </div>
         </main>
     );
 }
