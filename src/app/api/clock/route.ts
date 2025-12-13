@@ -17,18 +17,13 @@ export async function POST(request: Request) {
         let photoUrl = null;
 
         if (image) {
-            const buffer = Buffer.from(await image.arrayBuffer());
-            const filename = `${Date.now()}_${userId}.jpg`;
-            const uploadDir = path.join(process.cwd(), 'public/uploads');
-
             try {
-                // Ensure directory exists - though I created it with run_command, good to be safe or just assume
-                await writeFile(path.join(uploadDir, filename), buffer);
-                photoUrl = `/uploads/${filename}`;
+                // Convert to Base64 to store directly in DB (Vercel has ephemeral file system)
+                const buffer = Buffer.from(await image.arrayBuffer());
+                const base64Image = buffer.toString('base64');
+                photoUrl = `data:${image.type};base64,${base64Image}`;
             } catch (e) {
-                console.error('Error saving image:', e);
-                // Continue without image or fail? Let's log but continue, or maybe fail if strict.
-                // User asked for photo proof, so maybe better to note it failed.
+                console.error('Error processing image:', e);
             }
         }
 
