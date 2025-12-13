@@ -55,7 +55,8 @@ export default function Home() {
     <main className="container">
       <div className="glass card animate-fade-in" style={{ textAlign: 'center' }}>
         <div style={{ marginBottom: '2rem' }}>
-          <img src="/logo-easy.png" alt="EasyEvent Logo" style={{ maxWidth: '200px', height: 'auto', display: 'inline-block' }} />
+          <img src="/logo-easy.png" alt="EasyEvent Logo" style={{ maxWidth: '200px', height: 'auto', display: 'inline-block', marginBottom: '1rem' }} />
+          <h1 style={{ fontSize: '1.8rem', margin: 0 }}>Timbra Cartellino</h1>
         </div>
 
         <form onSubmit={handleLogin} style={{ marginBottom: '2rem' }}>
