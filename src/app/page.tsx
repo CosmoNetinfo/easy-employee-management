@@ -1,12 +1,27 @@
 'use client';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
+
+  useEffect(() => {
+    const stored = localStorage.getItem('user');
+    if (stored) {
+      const user = JSON.parse(stored);
+      // Verify minimal data integrity
+      if (user && user.role) {
+        if (user.role === 'ADMIN') {
+          router.replace('/admin');
+        } else {
+          router.replace('/dashboard');
+        }
+      }
+    }
+  }, []); // Only run once on mount
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
