@@ -35,13 +35,17 @@ export async function GET(request: Request) {
             orderBy: {
                 timestamp: 'desc',
             },
-            // Remove 'take' limit or increase it when filtering is active, 
-            // but for now let's keep it unbound if filtered, or capped if not? 
-            // Let's unbind it if filtered, or default to 500.
-            take: (startDate || userId) ? undefined : 500,
+            take: (startDate || userId) ? undefined : 100,
         });
 
-        return NextResponse.json(entries);
+        // Strip heavy Base64 data from list response
+        const safeEntries = entries.map(e => ({
+            ...e,
+            hasPhoto: !!e.photoUrl && e.photoUrl.length > 0,
+            photoUrl: null // Don't send the heavy string
+        }));
+
+        return NextResponse.json(safeEntries);
     } catch (error) {
         return NextResponse.json({ error: 'Failed to fetch entries' }, { status: 500 });
     }
