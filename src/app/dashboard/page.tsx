@@ -37,12 +37,44 @@ export default function Dashboard() {
         if (!user) return;
         setLoading(true);
 
-        const formData = new FormData();
-        formData.append('userId', user.id);
-        formData.append('type', type);
-        formData.append('image', file);
-
         try {
+            // Compress Image
+            const compressedFile = await new Promise<File>((resolve) => {
+                const img = new Image();
+                img.src = URL.createObjectURL(file);
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 600; // Aggressive resize for storage efficiency
+                    const scaleSize = MAX_WIDTH / img.width;
+
+                    // Only resize if wider than MAX_WIDTH
+                    if (scaleSize < 1) {
+                        canvas.width = MAX_WIDTH;
+                        canvas.height = img.height * scaleSize;
+                    } else {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                    }
+
+                    const ctx = canvas.getContext('2d');
+                    ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    canvas.toBlob((blob) => {
+                        if (blob) {
+                            resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+                        } else {
+                            resolve(file); // Fallback
+                        }
+                    }, 'image/jpeg', 0.5); // 50% quality is enough for proof
+                };
+                img.onerror = () => resolve(file); // Fallback on error
+            });
+
+            const formData = new FormData();
+            formData.append('userId', user.id);
+            formData.append('type', type);
+            formData.append('image', compressedFile);
+
             const res = await fetch('/api/clock', {
                 method: 'POST',
                 body: formData,
