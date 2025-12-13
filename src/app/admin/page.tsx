@@ -64,6 +64,22 @@ export default function Admin() {
         }
     };
 
+    const handleDelete = async (id: number) => {
+        if (!confirm('Sei sicuro di voler eliminare questa timbratura?')) return;
+
+        try {
+            const res = await fetch(`/api/admin/delete-entry?id=${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                // Ricarica senza refresh
+                fetchEntries();
+            } else {
+                alert('Errore durante l\'eliminazione');
+            }
+        } catch (e) {
+            alert('Errore di connessione');
+        }
+    };
+
     const handleFilter = (e: React.FormEvent) => {
         e.preventDefault();
         fetchEntries();
@@ -259,28 +275,44 @@ export default function Admin() {
                                         </span>
                                     </td>
                                     <td style={{ padding: '1rem' }}>
-                                        {entry.photoUrl ? (
-                                            <a
-                                                href={entry.photoUrl}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                className="btn"
+                                        <td style={{ padding: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                            {entry.photoUrl ? (
+                                                <a
+                                                    href={entry.photoUrl}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    className="btn"
+                                                    style={{
+                                                        textDecoration: 'none',
+                                                        background: 'var(--primary)',
+                                                        padding: '0.5rem 1rem',
+                                                        fontSize: '0.9rem',
+                                                        display: 'inline-flex',
+                                                        alignItems: 'center',
+                                                        gap: '0.5rem'
+                                                    }}
+                                                >
+                                                    <span>📸</span> Apri
+                                                </a>
+                                            ) : (
+                                                <span style={{ opacity: 0.3, padding: '0.5rem' }}>-</span>
+                                            )}
+                                            <button
+                                                onClick={() => handleDelete(entry.id)}
                                                 style={{
-                                                    textDecoration: 'none',
-                                                    background: 'var(--primary)',
-                                                    padding: '0.5rem 1rem',
-                                                    fontSize: '0.9rem',
-                                                    display: 'inline-flex',
-                                                    alignItems: 'center',
-                                                    gap: '0.5rem'
+                                                    background: 'var(--danger)',
+                                                    border: 'none',
+                                                    padding: '0.5rem 0.8rem',
+                                                    borderRadius: '8px',
+                                                    cursor: 'pointer',
+                                                    color: 'white',
+                                                    fontSize: '1rem'
                                                 }}
+                                                title="Elimina per sempre"
                                             >
-                                                <span>📸</span> Apri
-                                            </a>
-                                        ) : (
-                                            <span style={{ opacity: 0.3 }}>-</span>
-                                        )}
-                                    </td>
+                                                🗑️
+                                            </button>
+                                        </td>
                                 </tr>
                             ))}
                             {entries.length === 0 && !loading && (
