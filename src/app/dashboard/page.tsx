@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function Dashboard() {
@@ -8,7 +8,6 @@ export default function Dashboard() {
     const [status, setStatus] = useState<'IN' | 'OUT' | 'LOADING'>('LOADING');
     const [lastEntry, setLastEntry] = useState<any>(null);
     const [loading, setLoading] = useState(false);
-    const [cameraActive, setCameraActive] = useState(false); // Kept for logic compatibility but unused visually
 
     useEffect(() => {
         const stored = localStorage.getItem('user');
@@ -34,80 +33,37 @@ export default function Dashboard() {
         }
     };
 
-    const startCamera = async () => {
-        setCameraActive(true);
-        try {
-            // Try to get the environment (rear) camera, fallback to any video source
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: {
-                    facingMode: 'environment' // Prefer rear camera
-                }
-            });
-            if (videoRef.current) {
-                videoRef.current.srcObject = stream;
-            }
-        } catch (err) {
-            console.error("Error accessing camera", err);
-            alert("Impossibile accedere alla fotocamera. Assicurati di aver dato i permessi.");
-            setCameraActive(false);
-        }
-    };
-
-    const stopCamera = () => {
-        if (videoRef.current && videoRef.current.srcObject) {
-            const stream = videoRef.current.srcObject as MediaStream;
-            stream.getTracks().forEach(track => track.stop());
-            videoRef.current.srcObject = null;
-        }
-        setCameraActive(false);
-    };
-
-    const handleClock = async (type: 'IN' | 'OUT') => {
-        if (!user || !videoRef.current || !canvasRef.current) return;
+    const handleNativeClock = async (type: 'IN' | 'OUT', file: File) => {
+        if (!user) return;
         setLoading(true);
 
-        // Capture image
-        const video = videoRef.current;
-        const canvas = canvasRef.current;
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const formData = new FormData();
+        formData.append('userId', user.id);
+        formData.append('type', type);
+        formData.append('image', file);
 
-        canvas.toBlob(async (blob) => {
-            if (!blob) {
-                setLoading(false);
-                return;
+        try {
+            const res = await fetch('/api/clock', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (res.ok) {
+                await fetchStatus(user.id);
+                alert('Timbratura registrata con successo!');
+            } else {
+                alert('Errore timbratura');
             }
-
-            const formData = new FormData();
-            formData.append('userId', user.id);
-            formData.append('type', type);
-            formData.append('image', blob, 'capture.jpg');
-
-            try {
-                const res = await fetch('/api/clock', {
-                    method: 'POST',
-                    body: formData,
-                });
-
-                if (res.ok) {
-                    await fetchStatus(user.id);
-                    stopCamera(); // Close camera after success
-                } else {
-                    alert('Errore timbratura');
-                }
-            } catch (e) {
-                alert('Errore di connessione');
-            } finally {
-                setLoading(false);
-            }
-        }, 'image/jpeg');
+        } catch (e) {
+            alert('Errore di connessione');
+        } finally {
+            setLoading(false);
+            const input = document.getElementById('cameraInput') as HTMLInputElement;
+            if (input) input.value = '';
+        }
     };
 
     const handleLogout = () => {
-        stopCamera();
         localStorage.removeItem('user');
         router.push('/');
     };
@@ -142,37 +98,33 @@ export default function Dashboard() {
 
                 {status !== 'LOADING' && (
                     <div style={{ display: 'grid', gap: '1rem' }}>
-                        {!cameraActive ? (
-                            <>
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    capture="environment"
-                                    id="cameraInput"
-                                    style={{ display: 'none' }}
-                                    onChange={(e) => {
-                                        if (e.target.files && e.target.files[0]) {
-                                            handleNativeClock(status === 'OUT' ? 'IN' : 'OUT', e.target.files[0]);
-                                        }
-                                    }}
-                                    disabled={loading}
-                                />
-                                <label
-                                    htmlFor="cameraInput"
-                                    className="btn"
-                                    style={{
-                                        fontSize: '1.2rem',
-                                        padding: '1.5rem',
-                                        background: 'var(--primary)',
-                                        display: 'block',
-                                        cursor: loading ? 'wait' : 'pointer',
-                                        opacity: loading ? 0.7 : 1
-                                    }}
-                                >
-                                    {loading ? 'CARICAMENTO...' : (status === 'OUT' ? 'SCATTA FOTO ENTRATA 📸' : 'SCATTA FOTO USCITA 📸')}
-                                </label>
-                            </>
-                        ) : null}
+                        <input
+                            type="file"
+                            accept="image/*"
+                            capture="environment"
+                            id="cameraInput"
+                            style={{ display: 'none' }}
+                            onChange={(e) => {
+                                if (e.target.files && e.target.files[0]) {
+                                    handleNativeClock(status === 'OUT' ? 'IN' : 'OUT', e.target.files[0]);
+                                }
+                            }}
+                            disabled={loading}
+                        />
+                        <label
+                            htmlFor="cameraInput"
+                            className={`btn ${status === 'OUT' ? 'btn-success' : 'btn-danger'}`}
+                            style={{
+                                fontSize: '1.2rem',
+                                padding: '1.5rem',
+                                display: 'block',
+                                cursor: loading ? 'wait' : 'pointer',
+                                opacity: loading ? 0.7 : 1,
+                                background: status === 'OUT' ? 'var(--success)' : 'var(--danger)'
+                            }}
+                        >
+                            {loading ? 'CARICAMENTO...' : (status === 'OUT' ? 'SCATTA FOTO ENTRATA 📸' : 'SCATTA FOTO USCITA 📸')}
+                        </label>
                     </div>
                 )}
             </div>
