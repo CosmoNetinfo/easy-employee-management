@@ -101,7 +101,6 @@ export default function Dashboard() {
                         <input
                             type="file"
                             accept="image/*"
-                            capture="environment"
                             id="cameraInput"
                             style={{ display: 'none' }}
                             onChange={(e) => {
