@@ -65,6 +65,24 @@ export default function Admin() {
     };
 
     const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
+    const [loadingPhoto, setLoadingPhoto] = useState(false);
+
+    const handleOpenPhoto = async (id: number) => {
+        setLoadingPhoto(true);
+        try {
+            const res = await fetch(`/api/admin/get-photo?id=${id}`);
+            if (res.ok) {
+                const data = await res.json();
+                setSelectedPhoto(data.photoUrl);
+            } else {
+                alert('Impossibile caricare la foto');
+            }
+        } catch (e) {
+            alert('Errore di connessione');
+        } finally {
+            setLoadingPhoto(false);
+        }
+    };
 
     const handleDelete = async (id: number) => {
         if (!confirm('Sei sicuro di voler eliminare questa timbratura?')) return;
@@ -277,10 +295,11 @@ export default function Admin() {
                                         </span>
                                     </td>
                                     <td style={{ padding: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                        {entry.photoUrl ? (
+                                        {entry.hasPhoto ? (
                                             <button
-                                                onClick={() => setSelectedPhoto(entry.photoUrl)}
+                                                onClick={() => handleOpenPhoto(entry.id)}
                                                 className="btn"
+                                                disabled={loadingPhoto}
                                                 style={{
                                                     textDecoration: 'none',
                                                     background: 'var(--primary)',
@@ -291,10 +310,11 @@ export default function Admin() {
                                                     gap: '0.5rem',
                                                     border: 'none',
                                                     cursor: 'pointer',
-                                                    color: 'white'
+                                                    color: 'white',
+                                                    opacity: loadingPhoto ? 0.7 : 1
                                                 }}
                                             >
-                                                <span>📸</span> Apri
+                                                <span>📸</span> {loadingPhoto ? '...' : 'Apri'}
                                             </button>
                                         ) : (
                                             <span style={{ opacity: 0.3, padding: '0.5rem' }}>-</span>
