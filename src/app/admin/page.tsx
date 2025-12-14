@@ -11,7 +11,7 @@ export default function Admin() {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [selectedUserId, setSelectedUserId] = useState('');
-    const HOURLY_RATE = 7;
+    const [showUsers, setShowUsers] = useState(false);
 
     useEffect(() => {
         const stored = localStorage.getItem('user');
@@ -144,6 +144,25 @@ export default function Admin() {
         }
     };
 
+    const handleUpdateWage = async (userId: number, wage: string) => {
+        try {
+            const res = await fetch('/api/admin/update-wage', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId, hourlyWage: wage }),
+            });
+            if (res.ok) {
+                // Refresh data
+                fetchUsers();
+                fetchEntries(); // To update summaries
+            } else {
+                alert('Errore aggiornamento stipendio');
+            }
+        } catch (e) {
+            alert('Errore di connessione');
+        }
+    };
+
     const summary = useMemo(() => {
         // Group entries by user
         const userEntries: Record<string, any[]> = {};
@@ -172,17 +191,22 @@ export default function Admin() {
                 }
             }
             totalHours += hours;
+            const wage = logs[0].user.hourlyWage || 7;
+            const salary = hours * wage;
             return {
                 userId: logs[0].userId,
                 name: logs[0].user.name,
                 hours: hours,
-                salary: hours * HOURLY_RATE
+                salary: salary,
+                wage: wage
             };
         });
 
+        const totalSalary = userSummaries.reduce((acc, curr) => acc + curr.salary, 0);
+
         return {
             totalHours,
-            totalSalary: totalHours * HOURLY_RATE,
+            totalSalary,
             userSummaries
         };
     }, [entries]);
@@ -230,10 +254,13 @@ export default function Admin() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
                     <h2>Pannello di Controllo</h2>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        <button onClick={() => setShowSettings(!showSettings)} className="btn" style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.9rem', background: 'var(--primary)' }}>
-                            {showSettings ? 'Chiudi Impostazioni' : 'Impostazioni'}
+                        <button onClick={() => setShowUsers(!showUsers)} className="btn" style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.9rem', background: 'var(--primary)', opacity: showUsers ? 0.8 : 1 }}>
+                            {showUsers ? 'Chiudi Dipendenti' : 'Gestione Dipendenti'}
                         </button>
-                        <button onClick={handleLogout} className="btn" style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.9rem', background: 'var(--surface)' }}>
+                        <button onClick={() => setShowSettings(!showSettings)} className="btn" style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.9rem', background: 'var(--surface)' }}>
+                            {showSettings ? 'Settings' : 'Impostazioni'}
+                        </button>
+                        <button onClick={handleLogout} className="btn" style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.9rem', background: 'var(--danger)' }}>
                             Esci
                         </button>
                     </div>
@@ -257,6 +284,36 @@ export default function Admin() {
                     </div>
                 )}
 
+                {showUsers && (
+                    <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)', marginBottom: '2rem' }}>
+                        <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem' }}>Gestione Paga Oraria</h3>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
+                            {users.map(u => (
+                                <div key={u.id} style={{ background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <div>
+                                        <div style={{ fontWeight: 'bold' }}>{u.name}</div>
+                                        <div style={{ fontSize: '0.8rem', opacity: 0.7 }}>{u.code}</div>
+                                    </div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                        <label style={{ fontSize: '0.8rem' }}>€/h</label>
+                                        <input
+                                            type="number"
+                                            defaultValue={u.hourlyWage || 7}
+                                            onBlur={(e) => {
+                                                const val = e.target.value;
+                                                if (parseFloat(val) !== u.hourlyWage) {
+                                                    handleUpdateWage(u.id, val);
+                                                }
+                                            }}
+                                            style={{ width: '60px', padding: '0.25rem', borderRadius: '4px', background: 'var(--background)', color: 'white', border: '1px solid var(--border)' }}
+                                        />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
                 {/* Summary Section */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
                     <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
@@ -264,8 +321,10 @@ export default function Admin() {
                         <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>{summary.totalHours.toFixed(2)} h</p>
                     </div>
                     <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
-                        <h3 style={{ fontSize: '0.9rem', opacity: 0.7, marginBottom: '0.5rem' }}>Stipendio Stimato (7€/h)</h3>
-                        <p style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--success)' }}>€ {summary.totalSalary.toFixed(2)}</p>
+                        <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                            <h3 style={{ fontSize: '0.9rem', opacity: 0.7, marginBottom: '0.5rem' }}>Stipendio Stimato Totale</h3>
+                            <p style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--success)' }}>€ {summary.totalSalary.toFixed(2)}</p>
+                        </div>
                     </div>
                 </div>
 

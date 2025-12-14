@@ -11,6 +11,7 @@ export async function GET() {
                 name: true,
                 code: true,
                 role: true,
+                hourlyWage: true,
             },
             orderBy: {
                 name: 'asc',

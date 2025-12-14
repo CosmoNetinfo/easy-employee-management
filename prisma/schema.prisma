@@ -13,6 +13,7 @@ model User {
   name      String
   code      String   @unique
   role      String   @default("USER")
+  hourlyWage Float    @default(7.0)
   createdAt DateTime @default(now())
   entries   Entry[]
 }

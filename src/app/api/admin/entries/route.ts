@@ -58,7 +58,8 @@ export async function GET(request: Request) {
                     select: {
                         id: true,
                         name: true,
-                        code: true
+                        code: true,
+                        hourlyWage: true
                     }
                 }
             },
