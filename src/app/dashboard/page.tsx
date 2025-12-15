@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function Dashboard() {
     const [user, setUser] = useState<any>(null);
@@ -125,68 +126,85 @@ export default function Dashboard() {
                             Ultima {lastEntry.type === 'IN' ? 'entrata' : 'uscita'}: {new Date(lastEntry.timestamp).toLocaleString()}
                         </p>
                     )}
+                            )}
                 </div>
+                    )}
+            </div>
 
-                {status !== 'LOADING' && (
-                    <div style={{ display: 'grid', gap: '1rem' }}>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            capture="environment"
-                            id="cameraInput"
-                            style={{ display: 'none' }}
-                            onChange={(e) => {
-                                if (e.target.files && e.target.files[0]) {
-                                    handleNativeClock(status === 'OUT' ? 'IN' : 'OUT', e.target.files[0]);
-                                }
+            <div style={{ marginBottom: '2rem' }}>
+                <Link href="/dashboard/history" className="btn" style={{
+                    display: 'block',
+                    background: 'var(--surface)',
+                    padding: '1rem',
+                    textDecoration: 'none',
+                    color: 'var(--text-main)',
+                    fontWeight: 'bold',
+                    border: '1px solid var(--border)'
+                }}>
+                    📅 Visualizza Storico Ore
+                </Link>
+            </div>
+
+            {status !== 'LOADING' && (
+                <div style={{ display: 'grid', gap: '1rem' }}>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
+                        id="cameraInput"
+                        style={{ display: 'none' }}
+                        onChange={(e) => {
+                            if (e.target.files && e.target.files[0]) {
+                                handleNativeClock(status === 'OUT' ? 'IN' : 'OUT', e.target.files[0]);
+                            }
+                        }}
+                        disabled={loading}
+                    />
+
+                    {status === 'OUT' ? (
+                        <button
+                            onClick={() => document.getElementById('cameraInput')?.click()}
+                            className="btn btn-primary"
+                            style={{
+                                padding: '1.5rem',
+                                fontSize: '1.2rem',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                gap: '1rem',
+                                background: 'var(--success)'
                             }}
                             disabled={loading}
-                        />
-
-                        {status === 'OUT' ? (
-                            <button
-                                onClick={() => document.getElementById('cameraInput')?.click()}
-                                className="btn btn-primary"
-                                style={{
-                                    padding: '1.5rem',
-                                    fontSize: '1.2rem',
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    gap: '1rem',
-                                    background: 'var(--success)'
-                                }}
-                                disabled={loading}
-                            >
-                                <span style={{ fontSize: '1.5rem' }}>📸</span>
-                                {loading ? 'Invio in corso...' : 'SCATTA FOTO ENTRATA'}
-                            </button>
-                        ) : (
-                            <button
-                                onClick={() => document.getElementById('cameraInput')?.click()}
-                                className="btn"
-                                style={{
-                                    padding: '1.5rem',
-                                    fontSize: '1.2rem',
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    gap: '1rem',
-                                    background: 'var(--danger)'
-                                }}
-                                disabled={loading}
-                            >
-                                <span style={{ fontSize: '1.5rem' }}>📸</span>
-                                {loading ? 'Invio in corso...' : 'SCATTA FOTO USCITA'}
-                            </button>
-                        )}
-                    </div>
-                )}
-            </div>
-            {/* Footer */}
-            <div style={{ marginTop: '3rem', textAlign: 'center', fontSize: '0.8rem', opacity: 0.5, color: 'var(--text-muted)' }}>
-                Creata da Daniele Spalletti per <a href="https://easyevent.it/" target="_blank" style={{ color: 'inherit', textDecoration: 'underline' }}>EasyEvent.it</a>
-            </div>
-        </main>
+                        >
+                            <span style={{ fontSize: '1.5rem' }}>📸</span>
+                            {loading ? 'Invio in corso...' : 'SCATTA FOTO ENTRATA'}
+                        </button>
+                    ) : (
+                        <button
+                            onClick={() => document.getElementById('cameraInput')?.click()}
+                            className="btn"
+                            style={{
+                                padding: '1.5rem',
+                                fontSize: '1.2rem',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                gap: '1rem',
+                                background: 'var(--danger)'
+                            }}
+                            disabled={loading}
+                        >
+                            <span style={{ fontSize: '1.5rem' }}>📸</span>
+                            {loading ? 'Invio in corso...' : 'SCATTA FOTO USCITA'}
+                        </button>
+                    )}
+                </div>
+            )}
+        </div>
+            {/* Footer */ }
+    <div style={{ marginTop: '3rem', textAlign: 'center', fontSize: '0.8rem', opacity: 0.5, color: 'var(--text-muted)' }}>
+        Creata da Daniele Spalletti per <a href="https://easyevent.it/" target="_blank" style={{ color: 'inherit', textDecoration: 'underline' }}>EasyEvent.it</a>
+    </div>
+        </main >
     );
 }
