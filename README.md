@@ -15,6 +15,7 @@ L'applicazione è ottimizzata per l'uso da smartphone, permettendo ai dipendenti
     *   Basta premere "SCATTA FOTO ENTRATA" o "SCATTA FOTO USCITA".
     *   La foto viene salvata come prova della presenza.
 *   **Stato in Tempo Reale**: Mostra chiaramente se sei "AL LAVORO" (Verde) o "NON AL LAVORO" (Rosso).
+*   **Storico Ore**: Ogni dipendente può visualizzare il proprio storico turni e il totale delle ore lavorate direttamente dall'app.
 
 ### Per l'Amministratore (Pannello Web)
 *   **Dashboard Completa**: Accessibile via PC con codice amministratore.
