@@ -250,7 +250,7 @@ input:focus {
   object-fit: contain;
   margin-bottom: 1.5rem;
   box-shadow: var(--shadow-md);
-  background: white;
+  background: #1e90ff;
   padding: 12px;
 }
 
