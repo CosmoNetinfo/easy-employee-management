@@ -32,8 +32,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="it">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="it" translate="no">
+      <body className={`${geistSans.variable} ${geistMono.variable} notranslate`}>
         {children}
         <script
           dangerouslySetInnerHTML={{
