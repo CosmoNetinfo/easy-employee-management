@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 export default function Admin() {
     const router = useRouter();
@@ -11,7 +12,12 @@ export default function Admin() {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [selectedUserId, setSelectedUserId] = useState('');
+
     const [showUsers, setShowUsers] = useState(false);
+
+    // Edit Feature State
+    const [editingEntry, setEditingEntry] = useState<any>(null);
+    const [editTimestamp, setEditTimestamp] = useState('');
 
     useEffect(() => {
         const stored = localStorage.getItem('user');
@@ -157,6 +163,39 @@ export default function Admin() {
                 fetchEntries(); // To update summaries
             } else {
                 alert('Errore aggiornamento stipendio');
+            }
+        } catch (e) {
+            alert('Errore di connessione');
+        }
+    };
+
+    const handleEditClick = (entry: any) => {
+        setEditingEntry(entry);
+        // Format date for datetime-local input (YYYY-MM-DDTHH:mm)
+        // Adjust for local timezone offset
+        const date = new Date(entry.timestamp);
+        const localDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+        setEditTimestamp(localDate.toISOString().slice(0, 16));
+    };
+
+    const handleSaveEdit = async () => {
+        if (!editingEntry || !editTimestamp) return;
+
+        try {
+            const res = await fetch('/api/admin/update-entry', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: editingEntry.id,
+                    timestamp: new Date(editTimestamp).toISOString()
+                })
+            });
+
+            if (res.ok) {
+                setEditingEntry(null);
+                fetchEntries();
+            } else {
+                alert('Errore durante la modifica');
             }
         } catch (e) {
             alert('Errore di connessione');
@@ -347,6 +386,46 @@ export default function Admin() {
                     </div>
                 </div>
 
+                {/* Charts Section */}
+                <div className="card mb-8 animate-slide-up">
+                    <h3 className="mb-4">📊 Statistiche Ore (Periodo)</h3>
+                    <div style={{ width: '100%', height: 300 }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={summary.userSummaries}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
+                                <XAxis
+                                    dataKey="name"
+                                    stroke="var(--text-secondary)"
+                                    fontSize={12}
+                                    tickLine={false}
+                                    axisLine={false}
+                                />
+                                <YAxis
+                                    stroke="var(--text-secondary)"
+                                    fontSize={12}
+                                    tickLine={false}
+                                    axisLine={false}
+                                    unit="h"
+                                />
+                                <Tooltip
+                                    contentStyle={{
+                                        backgroundColor: 'var(--surface)',
+                                        borderRadius: '12px',
+                                        border: '1px solid var(--border)',
+                                        boxShadow: 'var(--shadow-lg)'
+                                    }}
+                                    cursor={{ fill: 'var(--surface-alt)' }}
+                                />
+                                <Bar dataKey="hours" radius={[8, 8, 0, 0]}>
+                                    {summary.userSummaries.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={index % 2 === 0 ? 'var(--accent)' : 'var(--accent-dark)'} />
+                                    ))}
+                                </Bar>
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+
                 {/* Filters & Table Section */}
                 <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
 
@@ -449,6 +528,14 @@ export default function Admin() {
                                                     <span className="text-muted" style={{ padding: '0 10px', fontSize: '0.85rem' }}>No Foto</span>
                                                 )}
                                                 <button
+                                                    onClick={() => handleEditClick(entry)}
+                                                    className="btn btn-ghost"
+                                                    style={{ color: 'var(--accent)', padding: '8px 12px' }}
+                                                    title="Modifica Orario"
+                                                >
+                                                    ✏️
+                                                </button>
+                                                <button
                                                     onClick={() => handleDelete(entry.id)}
                                                     className="btn btn-ghost"
                                                     style={{ color: 'var(--danger)', padding: '8px 12px' }}
@@ -524,6 +611,59 @@ export default function Admin() {
                             >
                                 ✕ Chiudi
                             </button>
+                        </div>
+                    </div>
+                )}
+
+                {/* Edit Modal */}
+                {editingEntry && (
+                    <div
+                        style={{
+                            position: 'fixed',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            background: 'rgba(0,0,0,0.8)',
+                            zIndex: 1000,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            padding: '1rem',
+                            backdropFilter: 'blur(5px)'
+                        }}
+                    >
+                        <div className="card animate-slide-up" style={{ width: '100%', maxWidth: '400px' }}>
+                            <h3 className="mb-4">✏️ Modifica Timbratura</h3>
+                            <p className="text-muted mb-4">
+                                Stai modificando l'orario per <strong>{editingEntry.user.name}</strong>
+                            </p>
+
+                            <div className="mb-4">
+                                <label className="label">Nuova Data e Ora</label>
+                                <input
+                                    type="datetime-local"
+                                    className="pill-input"
+                                    style={{ textAlign: 'left' }}
+                                    value={editTimestamp}
+                                    onChange={(e) => setEditTimestamp(e.target.value)}
+                                />
+                            </div>
+
+                            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+                                <button
+                                    onClick={() => setEditingEntry(null)}
+                                    className="btn btn-secondary"
+                                >
+                                    Annulla
+                                </button>
+                                <button
+                                    onClick={handleSaveEdit}
+                                    className="btn btn-primary"
+                                >
+                                    Salva Modifiche
+                                </button>
+                            </div>
                         </div>
                     </div>
                 )}
