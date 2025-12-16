@@ -250,52 +250,62 @@ export default function Admin() {
 
     return (
         <main className="container" style={{ maxWidth: '1200px' }}>
-            <div className="glass card animate-fade-in">
+            <div className="animate-slide-up">
+
+                {/* Header Section */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
-                    <h2>Pannello di Controllo</h2>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        <button onClick={() => setShowUsers(!showUsers)} className="btn" style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.9rem', background: 'var(--primary)', opacity: showUsers ? 0.8 : 1 }}>
+                    <div>
+                        <h2 style={{ margin: 0 }}>Pannello di Controllo</h2>
+                        <p className="text-muted" style={{ fontSize: '0.9rem' }}>Gestione completa dipendenti</p>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.8rem' }}>
+                        <button onClick={() => setShowUsers(!showUsers)} className="btn btn-secondary" style={{ width: 'auto', padding: '10px 20px', fontSize: '0.9rem' }}>
                             {showUsers ? 'Chiudi Dipendenti' : 'Gestione Dipendenti'}
                         </button>
-                        <button onClick={() => setShowSettings(!showSettings)} className="btn" style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.9rem', background: 'var(--surface)' }}>
+                        <button onClick={() => setShowSettings(!showSettings)} className="btn btn-secondary" style={{ width: 'auto', padding: '10px 20px', fontSize: '0.9rem' }}>
                             {showSettings ? 'Settings' : 'Impostazioni'}
                         </button>
-                        <button onClick={handleLogout} className="btn" style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.9rem', background: 'var(--danger)' }}>
+                        <button onClick={handleLogout} className="btn btn-danger" style={{ width: 'auto', padding: '10px 20px', fontSize: '0.9rem', boxShadow: 'none' }}>
                             Esci
                         </button>
                     </div>
                 </div>
 
+                {/* Settings Section */}
                 {showSettings && (
-                    <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)', marginBottom: '2rem' }}>
-                        <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem' }}>Cambia Password Admin</h3>
-                        <form onSubmit={handleUpdatePassword} style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                            <input
-                                type="text"
-                                placeholder="Nuovo Codice Admin"
-                                value={newAdminCode}
-                                onChange={(e) => setNewAdminCode(e.target.value)}
-                                style={{ padding: '0.5rem', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--background)' }}
-                            />
-                            <button type="submit" className="btn" style={{ width: 'auto', background: 'var(--success)' }}>
-                                Salva
-                            </button>
-                        </form>
+                    <div className="card-ghost mb-6">
+                        <h3 className="mb-4">Impostazioni Admin</h3>
+                        <div className="card" style={{ padding: '1.5rem', marginBottom: 0 }}>
+                            <h4 style={{ fontSize: '1rem', marginBottom: '1rem' }}>Cambia Password Admin</h4>
+                            <form onSubmit={handleUpdatePassword} style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                                <input
+                                    type="text"
+                                    placeholder="Nuovo Codice Admin"
+                                    value={newAdminCode}
+                                    onChange={(e) => setNewAdminCode(e.target.value)}
+                                    style={{ maxWidth: '300px', marginBottom: 0 }}
+                                />
+                                <button type="submit" className="btn btn-success" style={{ width: 'auto', padding: '10px 24px', boxShadow: 'none' }}>
+                                    Salva Password
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 )}
 
+                {/* Users Wage Section */}
                 {showUsers && (
-                    <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)', marginBottom: '2rem' }}>
-                        <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem' }}>Gestione Paga Oraria</h3>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
+                    <div className="card-ghost mb-6">
+                        <h3 className="mb-4">Gestione Paga Oraria</h3>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
                             {users.map(u => (
-                                <div key={u.id} style={{ background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <div key={u.id} className="card" style={{ padding: '1.2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 0 }}>
                                     <div>
-                                        <div style={{ fontWeight: 'bold' }}>{u.name}</div>
-                                        <div style={{ fontSize: '0.8rem', opacity: 0.7 }}>{u.code}</div>
+                                        <div style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{u.name}</div>
+                                        <div className="text-muted" style={{ fontSize: '0.85rem' }}>{u.code}</div>
                                     </div>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                        <label style={{ fontSize: '0.8rem' }}>€/h</label>
+                                        <label style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>€/h</label>
                                         <input
                                             type="number"
                                             defaultValue={u.hourlyWage || 7}
@@ -305,7 +315,7 @@ export default function Admin() {
                                                     handleUpdateWage(u.id, val);
                                                 }
                                             }}
-                                            style={{ width: '60px', padding: '0.25rem', borderRadius: '4px', background: 'var(--background)', color: 'white', border: '1px solid var(--border)' }}
+                                            style={{ width: '80px', padding: '8px', marginBottom: 0, textAlign: 'right' }}
                                         />
                                     </div>
                                 </div>
@@ -314,151 +324,158 @@ export default function Admin() {
                     </div>
                 )}
 
-                {/* Summary Section */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-                    <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
-                        <h3 style={{ fontSize: '0.9rem', opacity: 0.7, marginBottom: '0.5rem' }}>Ore Totali (Periodo)</h3>
-                        <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>{summary.totalHours.toFixed(2)} h</p>
-                    </div>
-                    <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
-                        <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
-                            <h3 style={{ fontSize: '0.9rem', opacity: 0.7, marginBottom: '0.5rem' }}>Stipendio Stimato Totale</h3>
-                            <p style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--success)' }}>€ {summary.totalSalary.toFixed(2)}</p>
+                {/* Summary Cards */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
+                    <div className="card" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: 0 }}>
+                        <div style={{ background: 'var(--primary-light)', padding: '12px', borderRadius: '12px', color: 'white' }}>
+                            ⏱️
+                        </div>
+                        <div>
+                            <h3 style={{ fontSize: '0.9rem', opacity: 0.7, marginBottom: '0.2rem' }}>Ore Totali (Periodo)</h3>
+                            <p style={{ fontSize: '1.8rem', fontWeight: 'bold', color: 'var(--text-main)', margin: 0 }}>{summary.totalHours.toFixed(2)} h</p>
                         </div>
                     </div>
+                    <div className="card" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: 0 }}>
+                        <div style={{ background: 'var(--success)', padding: '12px', borderRadius: '12px', color: 'white' }}>
+                            💰
+                        </div>
+                        <div>
+                            <h3 style={{ fontSize: '0.9rem', opacity: 0.7, marginBottom: '0.2rem' }}>Stipendio Stimato</h3>
+                            <p style={{ fontSize: '1.8rem', fontWeight: 'bold', color: 'var(--success)', margin: 0 }}>€ {summary.totalSalary.toFixed(2)}</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div style={{ marginBottom: '2rem', padding: '1.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '12px' }}>
-                    <form onSubmit={handleFilter} style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                            <label style={{ fontSize: '0.8rem', opacity: 0.7 }}>Dal</label>
-                            <input
-                                type="date"
-                                value={startDate}
-                                onChange={(e) => setStartDate(e.target.value)}
-                                style={{ padding: '0.5rem', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--background)' }}
-                            />
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                            <label style={{ fontSize: '0.8rem', opacity: 0.7 }}>Al</label>
-                            <input
-                                type="date"
-                                value={endDate}
-                                onChange={(e) => setEndDate(e.target.value)}
-                                style={{ padding: '0.5rem', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--background)' }}
-                            />
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', minWidth: '150px' }}>
-                            <label style={{ fontSize: '0.8rem', opacity: 0.7 }}>Dipendente</label>
-                            <select
-                                value={selectedUserId}
-                                onChange={(e) => setSelectedUserId(e.target.value)}
-                                style={{ padding: '0.5rem', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--background)', color: 'var(--text-main)' }}
-                            >
-                                <option value="">Tutti</option>
-                                {users.map(u => (
-                                    <option key={u.id} value={u.id}>{u.name} ({u.code})</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div style={{ display: 'flex', gap: '0.5rem' }}>
-                            <button type="submit" className="btn" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}>
-                                Filtra
-                            </button>
-                            <button type="button" onClick={handleReset} className="btn" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem', background: 'transparent', border: '1px solid var(--border)' }}>
-                                Reset
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                {/* Filters & Table Section */}
+                <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
 
-                <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
-                    <button onClick={handleExport} className="btn" disabled={entries.length === 0} style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.9rem', background: 'var(--success)' }}>
-                        Esporta CSV
-                    </button>
-                </div>
+                    {/* Filters Toolbar */}
+                    <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border)', background: 'var(--surface-alt)' }}>
+                        <form onSubmit={handleFilter} style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+                            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                                <div style={{ minWidth: '140px' }}>
+                                    <label className="label">Dal</label>
+                                    <input
+                                        type="date"
+                                        value={startDate}
+                                        onChange={(e) => setStartDate(e.target.value)}
+                                        style={{ padding: '10px', marginBottom: 0 }}
+                                    />
+                                </div>
+                                <div style={{ minWidth: '140px' }}>
+                                    <label className="label">Al</label>
+                                    <input
+                                        type="date"
+                                        value={endDate}
+                                        onChange={(e) => setEndDate(e.target.value)}
+                                        style={{ padding: '10px', marginBottom: 0 }}
+                                    />
+                                </div>
+                                <div style={{ minWidth: '180px' }}>
+                                    <label className="label">Dipendente</label>
+                                    <select
+                                        value={selectedUserId}
+                                        onChange={(e) => setSelectedUserId(e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            padding: '12px',
+                                            borderRadius: 'var(--radius)',
+                                            border: '2px solid transparent',
+                                            background: 'white',
+                                            fontSize: '1rem',
+                                            outline: 'none',
+                                            fontWeight: 500
+                                        }}
+                                    >
+                                        <option value="">Tutti i dipendenti</option>
+                                        {users.map(u => (
+                                            <option key={u.id} value={u.id}>{u.name} ({u.code})</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
 
-                <div style={{ overflowX: 'auto' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', color: 'var(--text-main)' }}>
-                        <thead>
-                            <tr style={{ background: 'rgba(255,255,255,0.05)', textAlign: 'left' }}>
-                                <th style={{ padding: '1rem' }}>Data/Ora</th>
-                                <th style={{ padding: '1rem' }}>Operaio</th>
-                                <th style={{ padding: '1rem' }}>Codice</th>
-                                <th style={{ padding: '1rem' }}>Azione</th>
-                                <th style={{ padding: '1rem' }}>Foto</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {entries.map((entry) => (
-                                <tr key={entry.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                                    <td style={{ padding: '1rem' }}>{new Date(entry.timestamp).toLocaleString()}</td>
-                                    <td style={{ padding: '1rem', fontWeight: 'bold' }}>{entry.user.name}</td>
-                                    <td style={{ padding: '1rem', opacity: 0.7 }}>{entry.user.code}</td>
-                                    <td style={{ padding: '1rem' }}>
-                                        <span style={{
-                                            background: entry.type === 'IN' ? 'var(--success)' : 'var(--danger)',
-                                            padding: '0.25rem 0.75rem',
-                                            borderRadius: '99px',
-                                            fontSize: '0.8rem',
-                                            fontWeight: 'bold'
-                                        }}>
-                                            {entry.type === 'IN' ? 'ENTRATA' : 'USCITA'}
-                                        </span>
-                                    </td>
-                                    <td style={{ padding: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                        {entry.hasPhoto ? (
+                            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-end' }}>
+                                <button type="submit" className="btn btn-primary" style={{ width: 'auto', padding: '10px 24px', marginBottom: 0, boxShadow: 'none' }}>
+                                    Filtra
+                                </button>
+                                <button type="button" onClick={handleReset} className="btn btn-ghost" style={{ width: 'auto', padding: '10px 24px', marginBottom: 0 }}>
+                                    Reset
+                                </button>
+                                <button type="button" onClick={handleExport} className="btn btn-success" disabled={entries.length === 0} style={{ width: 'auto', padding: '10px 24px', marginBottom: 0, marginLeft: '1rem', boxShadow: 'none' }}>
+                                    📥 CSV
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    {/* Table */}
+                    <div style={{ overflowX: 'auto' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', color: 'var(--text-main)', fontSize: '0.95rem' }}>
+                            <thead>
+                                <tr style={{ background: '#f8fafc', textAlign: 'left', borderBottom: '1px solid var(--border)' }}>
+                                    <th style={{ padding: '1.2rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Data/Ora</th>
+                                    <th style={{ padding: '1.2rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Dipendente</th>
+                                    <th style={{ padding: '1.2rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Codice</th>
+                                    <th style={{ padding: '1.2rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Stato</th>
+                                    <th style={{ padding: '1.2rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Azioni</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {entries.map((entry) => (
+                                    <tr key={entry.id} style={{ borderBottom: '1px solid var(--border)' }}>
+                                        <td style={{ padding: '1.2rem' }}>
+                                            <div style={{ fontWeight: 500 }}>{new Date(entry.timestamp).toLocaleDateString()}</div>
+                                            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{new Date(entry.timestamp).toLocaleTimeString()}</div>
+                                        </td>
+                                        <td style={{ padding: '1.2rem', fontWeight: 'bold' }}>{entry.user.name}</td>
+                                        <td style={{ padding: '1.2rem' }}>
+                                            <span style={{ background: '#f1f5f9', padding: '4px 8px', borderRadius: '6px', fontSize: '0.85rem' }}>
+                                                {entry.user.code}
+                                            </span>
+                                        </td>
+                                        <td style={{ padding: '1.2rem' }}>
+                                            {entry.type === 'IN' ? (
+                                                <span className="status-badge status-in" style={{ fontSize: '0.75rem' }}>ENTRATA</span>
+                                            ) : (
+                                                <span className="status-badge status-out" style={{ fontSize: '0.75rem' }}>USCITA</span>
+                                            )}
+                                        </td>
+                                        <td style={{ padding: '1.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                            {entry.hasPhoto ? (
+                                                <button
+                                                    onClick={() => handleOpenPhoto(entry.id)}
+                                                    className="btn btn-secondary"
+                                                    disabled={loadingPhoto}
+                                                    style={{ width: 'auto', padding: '8px 16px', fontSize: '0.85rem', marginBottom: 0 }}
+                                                >
+                                                    {loadingPhoto ? '...' : '📸 Foto'}
+                                                </button>
+                                            ) : (
+                                                <span style={{ padding: '8px 16px', fontSize: '0.85rem', opacity: 0.3 }}>No Foto</span>
+                                            )}
                                             <button
-                                                onClick={() => handleOpenPhoto(entry.id)}
-                                                className="btn"
-                                                disabled={loadingPhoto}
-                                                style={{
-                                                    textDecoration: 'none',
-                                                    background: 'var(--primary)',
-                                                    padding: '0.5rem 1rem',
-                                                    fontSize: '0.9rem',
-                                                    display: 'inline-flex',
-                                                    alignItems: 'center',
-                                                    gap: '0.5rem',
-                                                    border: 'none',
-                                                    cursor: 'pointer',
-                                                    color: 'white',
-                                                    opacity: loadingPhoto ? 0.7 : 1
-                                                }}
+                                                onClick={() => handleDelete(entry.id)}
+                                                className="btn btn-ghost"
+                                                style={{ width: 'auto', padding: '8px', color: 'var(--danger)', marginBottom: 0 }}
+                                                title="Elimina"
                                             >
-                                                <span>📸</span> {loadingPhoto ? '...' : 'Apri'}
+                                                🗑️
                                             </button>
-                                        ) : (
-                                            <span style={{ opacity: 0.3, padding: '0.5rem' }}>-</span>
-                                        )}
-                                        <button
-                                            onClick={() => handleDelete(entry.id)}
-                                            style={{
-                                                background: 'var(--danger)',
-                                                border: 'none',
-                                                padding: '0.5rem 0.8rem',
-                                                borderRadius: '8px',
-                                                cursor: 'pointer',
-                                                color: 'white',
-                                                fontSize: '1rem'
-                                            }}
-                                            title="Elimina per sempre"
-                                        >
-                                            🗑️
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                            {entries.length === 0 && !loading && (
-                                <tr>
-                                    <td colSpan={5} style={{ padding: '2rem', textAlign: 'center', opacity: 0.5 }}>
-                                        Nessuna attività trovata con i filtri selezionati.
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                    {loading && <p style={{ textAlign: 'center', padding: '2rem' }}>Caricamento...</p>}
+                                        </td>
+                                    </tr>
+                                ))}
+                                {entries.length === 0 && !loading && (
+                                    <tr>
+                                        <td colSpan={5} style={{ padding: '4rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+                                            Nessuna attività trovata per il periodo selezionato.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                        {loading && <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--primary)' }}>Caricamento dati in corso...</div>}
+                    </div>
                 </div>
 
                 {/* Photo Modal */}
@@ -470,13 +487,13 @@ export default function Admin() {
                             left: 0,
                             right: 0,
                             bottom: 0,
-                            background: 'rgba(0,0,0,0.8)',
+                            background: 'rgba(0,0,0,0.85)',
                             zIndex: 1000,
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center',
                             padding: '1rem',
-                            backdropFilter: 'blur(5px)'
+                            backdropFilter: 'blur(8px)'
                         }}
                         onClick={() => setSelectedPhoto(null)}
                     >
@@ -487,36 +504,37 @@ export default function Admin() {
                                 style={{
                                     maxWidth: '100%',
                                     maxHeight: '90vh',
-                                    borderRadius: '8px',
-                                    boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
-                                    border: '2px solid rgba(255,255,255,0.1)'
+                                    borderRadius: '12px',
+                                    boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
+                                    border: '4px solid white'
                                 }}
                             />
                             <button
                                 onClick={() => setSelectedPhoto(null)}
                                 style={{
                                     position: 'absolute',
-                                    top: '-40px',
-                                    right: 0,
+                                    top: '-50px',
+                                    right: '-10px',
                                     background: 'white',
                                     color: 'black',
                                     border: 'none',
                                     borderRadius: '50%',
-                                    width: '32px',
-                                    height: '32px',
+                                    width: '40px',
+                                    height: '40px',
                                     fontWeight: 'bold',
-                                    cursor: 'pointer'
+                                    cursor: 'pointer',
+                                    fontSize: '1.2rem'
                                 }}
                             >
-                                X
+                                ✕
                             </button>
                         </div>
                     </div>
                 )}
 
 
-                <div style={{ marginTop: '3rem', textAlign: 'center', fontSize: '0.8rem', opacity: 0.5, color: 'var(--text-muted)' }}>
-                    Creata da Daniele Spalletti per <a href="https://easyevent.it/" target="_blank" style={{ color: 'inherit', textDecoration: 'underline' }}>EasyEvent.it</a>
+                <div style={{ marginTop: '3rem', textAlign: 'center', fontSize: '0.8rem', opacity: 0.6, color: 'var(--text-muted)' }}>
+                    Easy Employee Management - Admin Panel
                 </div>
             </div>
         </main>

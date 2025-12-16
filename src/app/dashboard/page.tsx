@@ -104,46 +104,48 @@ export default function Dashboard() {
 
     return (
         <main className="container">
-            <div className="glass card animate-fade-in" style={{ textAlign: 'center' }}>
+            <div className="animate-slide-up">
+
+                {/* Header */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                    <h2 style={{ margin: 0 }}>Ciao, {user.name}</h2>
-                    <button onClick={handleLogout} style={{ background: 'transparent', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                    <div>
+                        <p className="text-muted" style={{ marginBottom: '0.2rem' }}>Bentornato,</p>
+                        <h2 style={{ margin: 0 }}>{user.name}</h2>
+                    </div>
+                    <button onClick={handleLogout} className="btn btn-ghost" style={{ width: 'auto', fontSize: '0.9rem' }}>
                         Esci
                     </button>
                 </div>
 
-                <div style={{ padding: '2rem', background: 'rgba(0,0,0,0.2)', borderRadius: '16px', marginBottom: '2rem' }}>
-                    <p style={{ color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Stato Attuale</p>
-                    <h1 style={{
-                        color: status === 'IN' ? 'var(--success)' : 'var(--text-main)',
-                        fontSize: '3rem',
-                        marginBottom: '0.5rem'
-                    }}>
-                        {status === 'LOADING' ? '...' : (status === 'IN' ? 'AL LAVORO' : 'NON AL LAVORO')}
-                    </h1>
+                {/* Status Card */}
+                <div className="card" style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                    <p className="text-muted" style={{ marginBottom: '1rem', textTransform: 'uppercase', fontSize: '0.8rem', letterSpacing: '1px' }}>Stato Attuale</p>
+
+                    <div style={{ marginBottom: '1.5rem' }}>
+                        {status === 'LOADING' ? (
+                            <span className="status-badge" style={{ background: '#e2e8f0', color: '#64748b' }}>...</span>
+                        ) : status === 'IN' ? (
+                            <span className="status-badge status-in" style={{ fontSize: '1.2rem', padding: '12px 32px' }}>AL LAVORO</span>
+                        ) : (
+                            <span className="status-badge status-out" style={{ fontSize: '1.2rem', padding: '12px 32px' }}>NON AL LAVORO</span>
+                        )}
+                    </div>
+
                     {lastEntry && (
-                        <p style={{ fontSize: '0.9rem', opacity: 0.7 }}>
-                            Ultima {lastEntry.type === 'IN' ? 'entrata' : 'uscita'}: {new Date(lastEntry.timestamp).toLocaleString()}
-                        </p>
+                        <div style={{ background: 'var(--surface-alt)', padding: '12px', borderRadius: '12px', display: 'inline-block' }}>
+                            <p style={{ fontSize: '0.9rem', margin: 0, color: 'var(--text-secondary)' }}>
+                                Ultima {lastEntry.type === 'IN' ? 'entrata' : 'uscita'}: <strong>{new Date(lastEntry.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</strong>
+                            </p>
+                            <p style={{ fontSize: '0.8rem', margin: '4px 0 0 0', opacity: 0.7 }}>
+                                {new Date(lastEntry.timestamp).toLocaleDateString()}
+                            </p>
+                        </div>
                     )}
                 </div>
 
-                <div style={{ marginBottom: '2rem' }}>
-                    <Link href="/dashboard/history" className="btn" style={{
-                        display: 'block',
-                        background: 'var(--surface)',
-                        padding: '1rem',
-                        textDecoration: 'none',
-                        color: 'var(--text-main)',
-                        fontWeight: 'bold',
-                        border: '1px solid var(--border)'
-                    }}>
-                        📅 Visualizza Storico Ore
-                    </Link>
-                </div>
-
+                {/* Actions */}
                 {status !== 'LOADING' && (
-                    <div style={{ display: 'grid', gap: '1rem' }}>
+                    <div style={{ display: 'grid', gap: '1rem', marginBottom: '2rem' }}>
                         <input
                             type="file"
                             accept="image/*"
@@ -161,46 +163,46 @@ export default function Dashboard() {
                         {status === 'OUT' ? (
                             <button
                                 onClick={() => document.getElementById('cameraInput')?.click()}
-                                className="btn btn-primary"
+                                className="btn btn-success"
                                 style={{
-                                    padding: '1.5rem',
-                                    fontSize: '1.2rem',
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    gap: '1rem',
-                                    background: 'var(--success)'
+                                    padding: '24px',
+                                    fontSize: '1.1rem',
+                                    boxShadow: '0 20px 25px -5px rgba(16, 185, 129, 0.25)'
                                 }}
                                 disabled={loading}
                             >
-                                <span style={{ fontSize: '1.5rem' }}>📸</span>
-                                {loading ? 'Invio in corso...' : 'SCATTA FOTO ENTRATA'}
+                                <span style={{ marginRight: '10px', fontSize: '1.4rem' }}>📸</span>
+                                {loading ? 'Caricamento...' : 'TIMBRA ENTRATA'}
                             </button>
                         ) : (
                             <button
                                 onClick={() => document.getElementById('cameraInput')?.click()}
-                                className="btn"
+                                className="btn btn-danger"
                                 style={{
-                                    padding: '1.5rem',
-                                    fontSize: '1.2rem',
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    gap: '1rem',
-                                    background: 'var(--danger)'
+                                    padding: '24px',
+                                    fontSize: '1.1rem',
+                                    boxShadow: '0 20px 25px -5px rgba(239, 68, 68, 0.25)'
                                 }}
                                 disabled={loading}
                             >
-                                <span style={{ fontSize: '1.5rem' }}>📸</span>
-                                {loading ? 'Invio in corso...' : 'SCATTA FOTO USCITA'}
+                                <span style={{ marginRight: '10px', fontSize: '1.4rem' }}>📸</span>
+                                {loading ? 'Caricamento...' : 'TIMBRA USCITA'}
                             </button>
                         )}
                     </div>
                 )}
-            </div>
-            {/* Footer */}
-            <div style={{ marginTop: '3rem', textAlign: 'center', fontSize: '0.8rem', opacity: 0.5, color: 'var(--text-muted)' }}>
-                Creata da Daniele Spalletti per <a href="https://easyevent.it/" target="_blank" style={{ color: 'inherit', textDecoration: 'underline' }}>EasyEvent.it</a>
+
+                {/* Secondary Actions */}
+                <div>
+                    <Link href="/dashboard/history" className="btn btn-secondary" style={{ textDecoration: 'none' }}>
+                        📅 Visualizza Storico Ore
+                    </Link>
+                </div>
+
+                {/* Footer */}
+                <div style={{ marginTop: '3rem', textAlign: 'center', fontSize: '0.8rem', opacity: 0.6 }}>
+                    <p className="text-muted">Easy Employee Management</p>
+                </div>
             </div>
         </main >
     );

@@ -53,37 +53,58 @@ export default function Home() {
 
   return (
     <main className="container">
-      <div className="glass card animate-fade-in" style={{ textAlign: 'center' }}>
-        <div style={{ marginBottom: '2rem' }}>
-          <img src="/logo-easy.png" alt="EasyEvent Logo" style={{ maxWidth: '200px', height: 'auto', display: 'inline-block', marginBottom: '1rem' }} />
-          <h1 style={{ fontSize: '1.8rem', margin: 0 }}>Timbra Cartellino</h1>
+      <div className="animate-slide-up" style={{ textAlign: 'center', marginTop: '2rem' }}>
+
+        <div style={{ marginBottom: '2.5rem' }}>
+          <img
+            src="/logo-easy.png"
+            alt="EasyEvent Logo"
+            className="logo"
+          />
+          <h1 className="mb-2">Timbra Cartellino</h1>
+          <p className="text-muted">Inserisci il tuo codice personale per accedere</p>
         </div>
 
-        <form onSubmit={handleLogin} style={{ marginBottom: '2rem' }}>
-          <div style={{ textAlign: 'left', marginBottom: '1rem' }}>
-            <label className="label">Codice Personale</label>
-            <input
-              type="text"
-              placeholder="Inserisci il tuo codice..."
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-            />
-          </div>
+        <div className="card">
+          <form onSubmit={handleLogin}>
+            <div className="input-group">
+              <label className="label">Codice Personale</label>
+              <input
+                type="text"
+                placeholder="Es. 123456"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                autoFocus
+              />
+            </div>
 
-          {error && <p style={{ color: 'var(--danger)', marginBottom: '1rem' }}>{error}</p>}
+            {error && (
+              <div className="mb-4" style={{
+                background: 'var(--danger-bg)',
+                color: 'var(--danger)',
+                padding: '12px',
+                borderRadius: '8px',
+                fontSize: '0.9rem',
+                fontWeight: 600
+              }}>
+                {error}
+              </div>
+            )}
 
-          <button type="submit" className="btn btn-primary">
-            Accedi
-          </button>
-        </form>
+            <button type="submit" className="btn btn-primary">
+              Accedi al Portale
+            </button>
+          </form>
+        </div>
 
-        <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
-          <p style={{ marginBottom: '1rem', fontSize: '0.9rem' }}>Non hai un account?</p>
-          <Link href="/register" style={{ color: 'var(--primary)', textDecoration: 'none', fontWeight: 600 }}>
+        <div style={{ marginTop: '2rem' }}>
+          <p className="mb-2" style={{ fontSize: '0.95rem' }}>Non hai ancora un codice?</p>
+          <Link href="/register" className="btn btn-ghost" style={{ textDecoration: 'none', fontWeight: 600 }}>
             Registrati come Nuovo Operaio
           </Link>
         </div>
-        <div style={{ marginTop: '3rem', fontSize: '0.8rem', opacity: 0.5 }}>
+
+        <div style={{ marginTop: '3rem', fontSize: '0.8rem', opacity: 0.6 }}>
           Creata da Daniele Spalletti per <a href="https://easyevent.it/" target="_blank" style={{ color: 'inherit', textDecoration: 'underline' }}>EasyEvent.it</a>
         </div>
       </div>
