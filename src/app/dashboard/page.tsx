@@ -95,34 +95,34 @@ export default function Dashboard() {
 
     return (
         <main className="mobile-container">
-            <div className="animate-slide-up" style={{ padding: '2rem 1.5rem', flex: 1 }}>
+            <div className="animate-slide-up" style={{ padding: '2rem 1.5rem', flex: 1, paddingBottom: '100px' }}>
 
                 {/* 1. Header */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                     <div>
-                        <h2 style={{ fontSize: '1.8rem', margin: 0 }}>Hello,</h2>
-                        <h2 style={{ fontSize: '1.8rem', color: 'var(--accent-dark)', margin: 0 }}>{user.name.split(' ')[0]}</h2>
+                        <h2 style={{ fontSize: '1.8rem', margin: 0, lineHeight: 1.2 }}>Ciao, <br />
+                            <span style={{ color: 'var(--accent-dark)' }}>{user.name.split(' ')[0]}</span></h2>
                     </div>
                     {/* User Profile Pic Placeholder */}
-                    <div style={{ width: '50px', height: '50px', background: '#e2e8f0', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#64748b' }}>
+                    <div style={{ width: '50px', height: '50px', background: '#e2e8f0', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#64748b', fontSize: '1.2rem' }}>
                         {user.name.charAt(0)}
                     </div>
                 </div>
 
                 {/* 2. Status Sphere */}
-                <div style={{ margin: '3rem 0', display: 'flex', justifyContent: 'center' }}>
+                <div style={{ margin: '2rem 0', display: 'flex', justifyContent: 'center' }}>
                     {status === 'LOADING' ? (
                         <div className="status-sphere" style={{ background: '#f1f5f9' }}>
-                            <span style={{ color: '#94a3b8' }}>Loading...</span>
+                            <span style={{ color: '#94a3b8' }}>Caricamento...</span>
                         </div>
                     ) : status === 'IN' ? (
                         <div className="status-sphere sphere-in">
                             <div className="sphere-glass-overlay" />
-                            <div className="status-text-label">CURRENTLY:</div>
-                            <div className="status-text-main">AT WORK</div>
+                            <div className="status-text-label">STATO ATTUALE:</div>
+                            <div className="status-text-main">AL LAVORO</div>
                             {lastEntry && (
-                                <div style={{ marginTop: '10px', color: 'white', opacity: 0.8, fontSize: '0.9rem' }}>
-                                    Since {new Date(lastEntry.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                <div style={{ marginTop: '10px', color: 'white', opacity: 0.9, fontSize: '0.9rem', fontWeight: 500 }}>
+                                    Dalle ore {new Date(lastEntry.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                 </div>
                             )}
                             <div style={{ position: 'absolute', top: '30px', right: '40px', background: 'rgba(255,255,255,0.2)', padding: '5px', borderRadius: '50%' }}>
@@ -132,10 +132,10 @@ export default function Dashboard() {
                     ) : (
                         <div className="status-sphere sphere-out">
                             <div className="sphere-glass-overlay" />
-                            <div className="status-text-label">CURRENTLY:</div>
-                            <div className="status-text-main">OFF DUTY</div>
-                            <div style={{ marginTop: '10px', color: 'white', opacity: 0.8, fontSize: '0.9rem' }}>
-                                Relaxing...
+                            <div className="status-text-label">STATO ATTUALE:</div>
+                            <div className="status-text-main" style={{ fontSize: '1.8rem' }}>NON AL LAVORO</div>
+                            <div style={{ marginTop: '10px', color: 'white', opacity: 0.9, fontSize: '0.9rem', fontWeight: 500 }}>
+                                Riposo...
                             </div>
                         </div>
                     )}
@@ -166,7 +166,7 @@ export default function Dashboard() {
                                 disabled={loading}
                             >
                                 <span style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📸</span>
-                                {loading ? 'Wait...' : 'Clock In'}
+                                {loading ? 'Attendere...' : 'Timbra Entrata'}
                             </button>
                         ) : (
                             <button
@@ -175,14 +175,14 @@ export default function Dashboard() {
                                 disabled={loading}
                             >
                                 <span style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📸</span>
-                                {loading ? 'Wait...' : 'Clock Out'}
+                                {loading ? 'Attendere...' : 'Timbra Uscita'}
                             </button>
                         )}
 
                         {/* Button 2: View History */}
                         <Link href="/dashboard/history" className="btn-square-lg btn-glass" style={{ textDecoration: 'none' }}>
                             <span style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📅</span>
-                            View History
+                            Vedi Storico
                         </Link>
                     </div>
                 )}
@@ -196,11 +196,11 @@ export default function Dashboard() {
                 </Link>
                 <Link href="/dashboard/history" className="nav-item">
                     <span style={{ fontSize: '1.2rem' }}>📅</span>
-                    Schedule
+                    Storico
                 </Link>
                 <div onClick={handleLogout} className="nav-item" style={{ cursor: 'pointer' }}>
                     <span style={{ fontSize: '1.2rem' }}>👤</span>
-                    Profile/Logout
+                    Esci
                 </div>
             </div>
 

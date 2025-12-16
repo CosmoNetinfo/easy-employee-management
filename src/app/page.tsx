@@ -68,7 +68,7 @@ export default function Home() {
             {/* Simple Logo Placeholder - blue letters */}
             <span style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--accent-dark)' }}>Es</span>
           </div>
-          <h1 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: '#1e293b' }}>Easy Employee</h1>
+          <h1 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: '#1e293b' }}>Dipendente facile</h1>
           <p style={{ opacity: 0.6 }}>Gestione Presenze Semplice</p>
         </div>
 
@@ -77,7 +77,7 @@ export default function Home() {
           <div style={{ marginBottom: '1.5rem' }}>
             <input
               type="text"
-              placeholder="Personal Code"
+              placeholder="Codice Personale"
               className="pill-input"
               value={code}
               onChange={(e) => setCode(e.target.value)}
@@ -100,14 +100,14 @@ export default function Home() {
           )}
 
           <button type="submit" className="btn-pill-primary" disabled={loading}>
-            {loading ? 'Verifica...' : 'Login'}
+            {loading ? 'Verifica...' : 'Accedi'}
           </button>
         </form>
 
         {/* Footer Link */}
         <div style={{ marginTop: '2rem' }}>
           <Link href="/register" style={{ color: 'var(--accent)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 500 }}>
-            Forgot Code? / Registrati
+            Codice Dimenticato? / Registrati
           </Link>
         </div>
 
