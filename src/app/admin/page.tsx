@@ -434,27 +434,29 @@ export default function Admin() {
                                                 <span className="status-badge status-out">⏹ USCITA</span>
                                             )}
                                         </td>
-                                        <td style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                                            {entry.hasPhoto ? (
+                                        <td>
+                                            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                                {entry.hasPhoto ? (
+                                                    <button
+                                                        onClick={() => handleOpenPhoto(entry.id)}
+                                                        className="btn btn-secondary"
+                                                        disabled={loadingPhoto}
+                                                        style={{ padding: '8px 16px', fontSize: '0.8rem' }}
+                                                    >
+                                                        {loadingPhoto ? '...' : '📸 Foto'}
+                                                    </button>
+                                                ) : (
+                                                    <span className="text-muted" style={{ padding: '0 10px', fontSize: '0.85rem' }}>No Foto</span>
+                                                )}
                                                 <button
-                                                    onClick={() => handleOpenPhoto(entry.id)}
-                                                    className="btn btn-secondary"
-                                                    disabled={loadingPhoto}
-                                                    style={{ padding: '8px 16px', fontSize: '0.8rem' }}
+                                                    onClick={() => handleDelete(entry.id)}
+                                                    className="btn btn-ghost"
+                                                    style={{ color: 'var(--danger)', padding: '8px 12px' }}
+                                                    title="Elimina"
                                                 >
-                                                    {loadingPhoto ? '...' : '📸 Foto'}
+                                                    🗑️
                                                 </button>
-                                            ) : (
-                                                <span className="text-muted" style={{ padding: '0 10px', fontSize: '0.85rem' }}>No Foto</span>
-                                            )}
-                                            <button
-                                                onClick={() => handleDelete(entry.id)}
-                                                className="btn btn-ghost"
-                                                style={{ color: 'var(--danger)', padding: '8px 12px' }}
-                                                title="Elimina"
-                                            >
-                                                🗑️
-                                            </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}

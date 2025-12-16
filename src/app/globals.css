@@ -373,6 +373,17 @@ select {
   color: var(--text-main);
 }
 
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-main);
+}
+
 .status-badge {
   padding: 4px 8px;
   border-radius: 12px;
