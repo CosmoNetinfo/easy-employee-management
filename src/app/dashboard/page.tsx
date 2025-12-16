@@ -37,16 +37,14 @@ export default function Dashboard() {
         setLoading(true);
 
         try {
-            // Compress Image - ULTRA FAST MODE
+            // Compress Image Logic (Keep existing logic)
             const compressedFile = await new Promise<File>((resolve) => {
                 const img = new Image();
                 img.src = URL.createObjectURL(file);
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 300; // Ultra-fast resize (Thumbnail size ~15KB)
+                    const MAX_WIDTH = 300;
                     const scaleSize = MAX_WIDTH / img.width;
-
-                    // Only resize if wider than MAX_WIDTH
                     if (scaleSize < 1) {
                         canvas.width = MAX_WIDTH;
                         canvas.height = img.height * scaleSize;
@@ -54,19 +52,14 @@ export default function Dashboard() {
                         canvas.width = img.width;
                         canvas.height = img.height;
                     }
-
                     const ctx = canvas.getContext('2d');
                     ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
-
                     canvas.toBlob((blob) => {
-                        if (blob) {
-                            resolve(new File([blob], file.name, { type: 'image/jpeg' }));
-                        } else {
-                            resolve(file); // Fallback
-                        }
-                    }, 'image/jpeg', 0.4); // 40% quality - SPEED PRIORITY
+                        if (blob) resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+                        else resolve(file);
+                    }, 'image/jpeg', 0.5);
                 };
-                img.onerror = () => resolve(file); // Fallback on error
+                img.onerror = () => resolve(file);
             });
 
             const formData = new FormData();
@@ -81,8 +74,6 @@ export default function Dashboard() {
 
             if (res.ok) {
                 await fetchStatus(user.id);
-                // alert('Timbratura registrata con successo!'); // Optional: remove alert for speed? keeping it for feedback
-                alert('Fatto! Timbratura inviata.');
             } else {
                 alert('Errore timbratura');
             }
@@ -103,49 +94,56 @@ export default function Dashboard() {
     if (!user) return null;
 
     return (
-        <main className="container">
-            <div className="animate-slide-up">
+        <main className="mobile-container">
+            <div className="animate-slide-up" style={{ padding: '2rem 1.5rem', flex: 1 }}>
 
-                {/* Header */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                {/* 1. Header */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
-                        <p className="text-muted" style={{ marginBottom: '0.2rem' }}>Bentornato,</p>
-                        <h2 style={{ margin: 0 }}>{user.name}</h2>
+                        <h2 style={{ fontSize: '1.8rem', margin: 0 }}>Hello,</h2>
+                        <h2 style={{ fontSize: '1.8rem', color: 'var(--accent-dark)', margin: 0 }}>{user.name.split(' ')[0]}</h2>
                     </div>
-                    <button onClick={handleLogout} className="btn btn-ghost" style={{ width: 'auto', fontSize: '0.9rem' }}>
-                        Esci
-                    </button>
+                    {/* User Profile Pic Placeholder */}
+                    <div style={{ width: '50px', height: '50px', background: '#e2e8f0', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#64748b' }}>
+                        {user.name.charAt(0)}
+                    </div>
                 </div>
 
-                {/* Status Card */}
-                <div className="card" style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                    <p className="text-muted" style={{ marginBottom: '1rem', textTransform: 'uppercase', fontSize: '0.8rem', letterSpacing: '1px' }}>Stato Attuale</p>
-
-                    <div style={{ marginBottom: '1.5rem' }}>
-                        {status === 'LOADING' ? (
-                            <span className="status-badge" style={{ background: '#e2e8f0', color: '#64748b' }}>...</span>
-                        ) : status === 'IN' ? (
-                            <span className="status-badge status-in" style={{ fontSize: '1.2rem', padding: '12px 32px' }}>AL LAVORO</span>
-                        ) : (
-                            <span className="status-badge status-out" style={{ fontSize: '1.2rem', padding: '12px 32px' }}>NON AL LAVORO</span>
-                        )}
-                    </div>
-
-                    {lastEntry && (
-                        <div style={{ background: 'var(--surface-alt)', padding: '12px', borderRadius: '12px', display: 'inline-block' }}>
-                            <p style={{ fontSize: '0.9rem', margin: 0, color: 'var(--text-secondary)' }}>
-                                Ultima {lastEntry.type === 'IN' ? 'entrata' : 'uscita'}: <strong>{new Date(lastEntry.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</strong>
-                            </p>
-                            <p style={{ fontSize: '0.8rem', margin: '4px 0 0 0', opacity: 0.7 }}>
-                                {new Date(lastEntry.timestamp).toLocaleDateString()}
-                            </p>
+                {/* 2. Status Sphere */}
+                <div style={{ margin: '3rem 0', display: 'flex', justifyContent: 'center' }}>
+                    {status === 'LOADING' ? (
+                        <div className="status-sphere" style={{ background: '#f1f5f9' }}>
+                            <span style={{ color: '#94a3b8' }}>Loading...</span>
+                        </div>
+                    ) : status === 'IN' ? (
+                        <div className="status-sphere sphere-in">
+                            <div className="sphere-glass-overlay" />
+                            <div className="status-text-label">CURRENTLY:</div>
+                            <div className="status-text-main">AT WORK</div>
+                            {lastEntry && (
+                                <div style={{ marginTop: '10px', color: 'white', opacity: 0.8, fontSize: '0.9rem' }}>
+                                    Since {new Date(lastEntry.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </div>
+                            )}
+                            <div style={{ position: 'absolute', top: '30px', right: '40px', background: 'rgba(255,255,255,0.2)', padding: '5px', borderRadius: '50%' }}>
+                                🕒
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="status-sphere sphere-out">
+                            <div className="sphere-glass-overlay" />
+                            <div className="status-text-label">CURRENTLY:</div>
+                            <div className="status-text-main">OFF DUTY</div>
+                            <div style={{ marginTop: '10px', color: 'white', opacity: 0.8, fontSize: '0.9rem' }}>
+                                Relaxing...
+                            </div>
                         </div>
                     )}
                 </div>
 
-                {/* Actions */}
+                {/* 3. Action Grid */}
                 {status !== 'LOADING' && (
-                    <div style={{ display: 'grid', gap: '1rem', marginBottom: '2rem' }}>
+                    <div className="action-grid">
                         <input
                             type="file"
                             accept="image/*"
@@ -160,50 +158,52 @@ export default function Dashboard() {
                             disabled={loading}
                         />
 
+                        {/* Button 1: Clock Action */}
                         {status === 'OUT' ? (
                             <button
+                                className="btn-square-lg btn-green"
                                 onClick={() => document.getElementById('cameraInput')?.click()}
-                                className="btn btn-success"
-                                style={{
-                                    padding: '24px',
-                                    fontSize: '1.1rem',
-                                    boxShadow: '0 20px 25px -5px rgba(16, 185, 129, 0.25)'
-                                }}
                                 disabled={loading}
                             >
-                                <span style={{ marginRight: '10px', fontSize: '1.4rem' }}>📸</span>
-                                {loading ? 'Caricamento...' : 'TIMBRA ENTRATA'}
+                                <span style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📸</span>
+                                {loading ? 'Wait...' : 'Clock In'}
                             </button>
                         ) : (
                             <button
+                                className="btn-square-lg btn-red"
                                 onClick={() => document.getElementById('cameraInput')?.click()}
-                                className="btn btn-danger"
-                                style={{
-                                    padding: '24px',
-                                    fontSize: '1.1rem',
-                                    boxShadow: '0 20px 25px -5px rgba(239, 68, 68, 0.25)'
-                                }}
                                 disabled={loading}
                             >
-                                <span style={{ marginRight: '10px', fontSize: '1.4rem' }}>📸</span>
-                                {loading ? 'Caricamento...' : 'TIMBRA USCITA'}
+                                <span style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📸</span>
+                                {loading ? 'Wait...' : 'Clock Out'}
                             </button>
                         )}
+
+                        {/* Button 2: View History */}
+                        <Link href="/dashboard/history" className="btn-square-lg btn-glass" style={{ textDecoration: 'none' }}>
+                            <span style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📅</span>
+                            View History
+                        </Link>
                     </div>
                 )}
+            </div>
 
-                {/* Secondary Actions */}
-                <div>
-                    <Link href="/dashboard/history" className="btn btn-secondary" style={{ textDecoration: 'none' }}>
-                        📅 Visualizza Storico Ore
-                    </Link>
-                </div>
-
-                {/* Footer */}
-                <div style={{ marginTop: '3rem', textAlign: 'center', fontSize: '0.8rem', opacity: 0.6 }}>
-                    <p className="text-muted">Easy Employee Management</p>
+            {/* 4. Bottom Navigation */}
+            <div className="bottom-nav animate-slide-up">
+                <Link href="/dashboard" className="nav-item active">
+                    <span style={{ fontSize: '1.2rem' }}>🏠</span>
+                    Home
+                </Link>
+                <Link href="/dashboard/history" className="nav-item">
+                    <span style={{ fontSize: '1.2rem' }}>📅</span>
+                    Schedule
+                </Link>
+                <div onClick={handleLogout} className="nav-item" style={{ cursor: 'pointer' }}>
+                    <span style={{ fontSize: '1.2rem' }}>👤</span>
+                    Profile/Logout
                 </div>
             </div>
-        </main >
+
+        </main>
     );
 }

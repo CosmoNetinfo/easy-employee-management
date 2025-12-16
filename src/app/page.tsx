@@ -6,13 +6,13 @@ import { useRouter } from 'next/navigation';
 export default function Home() {
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     const stored = localStorage.getItem('user');
     if (stored) {
       const user = JSON.parse(stored);
-      // Verify minimal data integrity
       if (user && user.role) {
         if (user.role === 'ADMIN') {
           router.replace('/admin');
@@ -21,11 +21,12 @@ export default function Home() {
         }
       }
     }
-  }, []); // Only run once on mount
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
     try {
       const res = await fetch('/api/login', {
@@ -45,68 +46,71 @@ export default function Home() {
       } else {
         const data = await res.json();
         setError(data.error || 'Login fallito');
+        setLoading(false);
       }
     } catch (err) {
       setError('Errore di connessione');
+      setLoading(false);
     }
   };
 
   return (
-    <main className="container">
-      <div className="animate-slide-up" style={{ textAlign: 'center', marginTop: '2rem' }}>
+    <main className="mobile-container">
+      {/* 1. Blue Wave Background Header */}
+      <div className="blue-wave-header" />
 
-        <div style={{ marginBottom: '2.5rem' }}>
-          <img
-            src="/logo-easy.png"
-            alt="EasyEvent Logo"
-            className="logo"
-          />
-          <h1 className="mb-2">Timbra Cartellino</h1>
-          <p className="text-muted">Inserisci il tuo codice personale per accedere</p>
+      {/* 2. Login Content Layer */}
+      <div className="login-content animate-slide-up">
+
+        {/* Logo Section */}
+        <div style={{ marginBottom: '2rem' }}>
+          <div className="logo-circle">
+            {/* Simple Logo Placeholder - blue letters */}
+            <span style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--accent-dark)' }}>Es</span>
+          </div>
+          <h1 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: '#1e293b' }}>Easy Employee</h1>
+          <p style={{ opacity: 0.6 }}>Gestione Presenze Semplice</p>
         </div>
 
-        <div className="card">
-          <form onSubmit={handleLogin}>
-            <div className="input-group">
-              <label className="label">Codice Personale</label>
-              <input
-                type="text"
-                placeholder="Es. 123456"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                autoFocus
-              />
+        {/* Login Form */}
+        <form onSubmit={handleLogin} style={{ width: '100%' }}>
+          <div style={{ marginBottom: '1.5rem' }}>
+            <input
+              type="text"
+              placeholder="Personal Code"
+              className="pill-input"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              autoFocus
+            />
+          </div>
+
+          {error && (
+            <div style={{
+              color: 'var(--danger)',
+              marginBottom: '1rem',
+              fontSize: '0.9rem',
+              fontWeight: 600,
+              background: 'rgba(239, 68, 68, 0.1)',
+              padding: '10px',
+              borderRadius: '12px'
+            }}>
+              {error}
             </div>
+          )}
 
-            {error && (
-              <div className="mb-4" style={{
-                background: 'var(--danger-bg)',
-                color: 'var(--danger)',
-                padding: '12px',
-                borderRadius: '8px',
-                fontSize: '0.9rem',
-                fontWeight: 600
-              }}>
-                {error}
-              </div>
-            )}
+          <button type="submit" className="btn-pill-primary" disabled={loading}>
+            {loading ? 'Verifica...' : 'Login'}
+          </button>
+        </form>
 
-            <button type="submit" className="btn btn-primary">
-              Accedi al Portale
-            </button>
-          </form>
-        </div>
-
+        {/* Footer Link */}
         <div style={{ marginTop: '2rem' }}>
-          <p className="mb-2" style={{ fontSize: '0.95rem' }}>Non hai ancora un codice?</p>
-          <Link href="/register" className="btn btn-ghost" style={{ textDecoration: 'none', fontWeight: 600 }}>
-            Registrati come Nuovo Operaio
+          <Link href="/register" style={{ color: 'var(--accent)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 500 }}>
+            Forgot Code? / Registrati
           </Link>
         </div>
 
-        <div style={{ marginTop: '3rem', fontSize: '0.8rem', opacity: 0.6 }}>
-          Creata da Daniele Spalletti per <a href="https://easyevent.it/" target="_blank" style={{ color: 'inherit', textDecoration: 'underline' }}>EasyEvent.it</a>
-        </div>
       </div>
     </main>
   );

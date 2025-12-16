@@ -249,23 +249,23 @@ export default function Admin() {
     };
 
     return (
-        <main className="container" style={{ maxWidth: '1200px' }}>
+        <main className="container">
             <div className="animate-slide-up">
 
                 {/* Header Section */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1.5rem' }} className="mb-8">
                     <div>
-                        <h2 style={{ margin: 0 }}>Pannello di Controllo</h2>
-                        <p className="text-muted" style={{ fontSize: '0.9rem' }}>Gestione completa dipendenti</p>
+                        <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Pannello di Controllo</h1>
+                        <p className="text-muted">Gestione completa dipendenti e buste paga</p>
                     </div>
                     <div style={{ display: 'flex', gap: '0.8rem' }}>
-                        <button onClick={() => setShowUsers(!showUsers)} className="btn btn-secondary" style={{ width: 'auto', padding: '10px 20px', fontSize: '0.9rem' }}>
-                            {showUsers ? 'Chiudi Dipendenti' : 'Gestione Dipendenti'}
+                        <button onClick={() => setShowUsers(!showUsers)} className={`btn ${showUsers ? 'btn-primary' : 'btn-secondary'}`}>
+                            {showUsers ? 'Chiudi Dipendenti' : '👥 Gestione Dipendenti'}
                         </button>
-                        <button onClick={() => setShowSettings(!showSettings)} className="btn btn-secondary" style={{ width: 'auto', padding: '10px 20px', fontSize: '0.9rem' }}>
-                            {showSettings ? 'Settings' : 'Impostazioni'}
+                        <button onClick={() => setShowSettings(!showSettings)} className={`btn ${showSettings ? 'btn-primary' : 'btn-secondary'}`}>
+                            {showSettings ? 'Chiudi Settings' : '⚙️ Impostazioni'}
                         </button>
-                        <button onClick={handleLogout} className="btn btn-danger" style={{ width: 'auto', padding: '10px 20px', fontSize: '0.9rem', boxShadow: 'none' }}>
+                        <button onClick={handleLogout} className="btn btn-danger">
                             Esci
                         </button>
                     </div>
@@ -273,39 +273,40 @@ export default function Admin() {
 
                 {/* Settings Section */}
                 {showSettings && (
-                    <div className="card-ghost mb-6">
-                        <h3 className="mb-4">Impostazioni Admin</h3>
-                        <div className="card" style={{ padding: '1.5rem', marginBottom: 0 }}>
-                            <h4 style={{ fontSize: '1rem', marginBottom: '1rem' }}>Cambia Password Admin</h4>
-                            <form onSubmit={handleUpdatePassword} style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                                <input
-                                    type="text"
-                                    placeholder="Nuovo Codice Admin"
-                                    value={newAdminCode}
-                                    onChange={(e) => setNewAdminCode(e.target.value)}
-                                    style={{ maxWidth: '300px', marginBottom: 0 }}
-                                />
-                                <button type="submit" className="btn btn-success" style={{ width: 'auto', padding: '10px 24px', boxShadow: 'none' }}>
-                                    Salva Password
-                                </button>
-                            </form>
+                    <div className="mb-8 animate-slide-up">
+                        <div className="card">
+                            <h3 className="mb-4">⚙️ Impostazioni Admin</h3>
+                            <div style={{ maxWidth: '400px' }}>
+                                <label className="label">Cambia Password Admin</label>
+                                <form onSubmit={handleUpdatePassword} style={{ display: 'flex', gap: '1rem' }}>
+                                    <input
+                                        type="text"
+                                        placeholder="Nuovo Codice..."
+                                        value={newAdminCode}
+                                        onChange={(e) => setNewAdminCode(e.target.value)}
+                                    />
+                                    <button type="submit" className="btn btn-primary">
+                                        Salva
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 )}
 
                 {/* Users Wage Section */}
                 {showUsers && (
-                    <div className="card-ghost mb-6">
-                        <h3 className="mb-4">Gestione Paga Oraria</h3>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+                    <div className="mb-8 animate-slide-up">
+                        <h3 className="mb-4">💰 Gestione Paga Oraria</h3>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
                             {users.map(u => (
-                                <div key={u.id} className="card" style={{ padding: '1.2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 0 }}>
+                                <div key={u.id} className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem' }}>
                                     <div>
-                                        <div style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{u.name}</div>
-                                        <div className="text-muted" style={{ fontSize: '0.85rem' }}>{u.code}</div>
+                                        <div className="font-bold" style={{ fontSize: '1.1rem' }}>{u.name}</div>
+                                        <div className="text-muted" style={{ fontSize: '0.85rem' }}>Matricola: {u.code}</div>
                                     </div>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                        <label style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>€/h</label>
+                                        <label className="text-muted" style={{ fontSize: '0.9rem' }}>€/h</label>
                                         <input
                                             type="number"
                                             defaultValue={u.hourlyWage || 7}
@@ -315,7 +316,7 @@ export default function Admin() {
                                                     handleUpdateWage(u.id, val);
                                                 }
                                             }}
-                                            style={{ width: '80px', padding: '8px', marginBottom: 0, textAlign: 'right' }}
+                                            style={{ width: '80px', textAlign: 'right', fontWeight: 'bold' }}
                                         />
                                     </div>
                                 </div>
@@ -325,67 +326,57 @@ export default function Admin() {
                 )}
 
                 {/* Summary Cards */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
-                    <div className="card" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: 0 }}>
-                        <div style={{ background: 'var(--primary-light)', padding: '12px', borderRadius: '12px', color: 'white' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }} className="mb-8">
+                    <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                        <div style={{ background: 'var(--accent-light)', padding: '16px', borderRadius: '16px', fontSize: '2rem' }}>
                             ⏱️
                         </div>
                         <div>
-                            <h3 style={{ fontSize: '0.9rem', opacity: 0.7, marginBottom: '0.2rem' }}>Ore Totali (Periodo)</h3>
-                            <p style={{ fontSize: '1.8rem', fontWeight: 'bold', color: 'var(--text-main)', margin: 0 }}>{summary.totalHours.toFixed(2)} h</p>
+                            <p className="text-muted font-medium mb-1">Ore Totali (Periodo)</p>
+                            <h2 style={{ margin: 0, color: 'var(--accent)' }}>{summary.totalHours.toFixed(2)} h</h2>
                         </div>
                     </div>
-                    <div className="card" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: 0 }}>
-                        <div style={{ background: 'var(--success)', padding: '12px', borderRadius: '12px', color: 'white' }}>
-                            💰
+                    <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                        <div style={{ background: 'var(--success-bg)', padding: '16px', borderRadius: '16px', fontSize: '2rem' }}>
+                            💸
                         </div>
                         <div>
-                            <h3 style={{ fontSize: '0.9rem', opacity: 0.7, marginBottom: '0.2rem' }}>Stipendio Stimato</h3>
-                            <p style={{ fontSize: '1.8rem', fontWeight: 'bold', color: 'var(--success)', margin: 0 }}>€ {summary.totalSalary.toFixed(2)}</p>
+                            <p className="text-muted font-medium mb-1">Stipendio Stimato</p>
+                            <h2 style={{ margin: 0, color: 'var(--success)' }}>€ {summary.totalSalary.toFixed(2)}</h2>
                         </div>
                     </div>
                 </div>
 
                 {/* Filters & Table Section */}
-                <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
+                <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
 
-                    {/* Filters Toolbar */}
+                    {/* Filters Header */}
                     <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border)', background: 'var(--surface-alt)' }}>
-                        <form onSubmit={handleFilter} style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between' }}>
-                            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                                <div style={{ minWidth: '140px' }}>
+                        <form onSubmit={handleFilter} style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+                            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', flex: 1 }}>
+                                <div>
                                     <label className="label">Dal</label>
                                     <input
                                         type="date"
                                         value={startDate}
                                         onChange={(e) => setStartDate(e.target.value)}
-                                        style={{ padding: '10px', marginBottom: 0 }}
+                                        style={{ minWidth: '150px' }}
                                     />
                                 </div>
-                                <div style={{ minWidth: '140px' }}>
+                                <div>
                                     <label className="label">Al</label>
                                     <input
                                         type="date"
                                         value={endDate}
                                         onChange={(e) => setEndDate(e.target.value)}
-                                        style={{ padding: '10px', marginBottom: 0 }}
+                                        style={{ minWidth: '150px' }}
                                     />
                                 </div>
-                                <div style={{ minWidth: '180px' }}>
-                                    <label className="label">Dipendente</label>
+                                <div style={{ minWidth: '200px', flex: 1 }}>
+                                    <label className="label">Filtra per Dipendente</label>
                                     <select
                                         value={selectedUserId}
                                         onChange={(e) => setSelectedUserId(e.target.value)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '12px',
-                                            borderRadius: 'var(--radius)',
-                                            border: '2px solid transparent',
-                                            background: 'white',
-                                            fontSize: '1rem',
-                                            outline: 'none',
-                                            fontWeight: 500
-                                        }}
                                     >
                                         <option value="">Tutti i dipendenti</option>
                                         {users.map(u => (
@@ -395,69 +386,71 @@ export default function Admin() {
                                 </div>
                             </div>
 
-                            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-end' }}>
-                                <button type="submit" className="btn btn-primary" style={{ width: 'auto', padding: '10px 24px', marginBottom: 0, boxShadow: 'none' }}>
-                                    Filtra
+                            <div style={{ display: 'flex', gap: '0.8rem' }}>
+                                <button type="submit" className="btn btn-primary">
+                                    Filtra Risultati
                                 </button>
-                                <button type="button" onClick={handleReset} className="btn btn-ghost" style={{ width: 'auto', padding: '10px 24px', marginBottom: 0 }}>
+                                <button type="button" onClick={handleReset} className="btn btn-ghost">
                                     Reset
                                 </button>
-                                <button type="button" onClick={handleExport} className="btn btn-success" disabled={entries.length === 0} style={{ width: 'auto', padding: '10px 24px', marginBottom: 0, marginLeft: '1rem', boxShadow: 'none' }}>
-                                    📥 CSV
+                                <button type="button" onClick={handleExport} className="btn btn-success" disabled={entries.length === 0}>
+                                    📥 Export CSV
                                 </button>
                             </div>
                         </form>
                     </div>
 
                     {/* Table */}
-                    <div style={{ overflowX: 'auto' }}>
-                        <table style={{ width: '100%', borderCollapse: 'collapse', color: 'var(--text-main)', fontSize: '0.95rem' }}>
+                    <div className="table-container" style={{ borderRadius: 0, boxShadow: 'none', border: 'none' }}>
+                        <table>
                             <thead>
-                                <tr style={{ background: '#f8fafc', textAlign: 'left', borderBottom: '1px solid var(--border)' }}>
-                                    <th style={{ padding: '1.2rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Data/Ora</th>
-                                    <th style={{ padding: '1.2rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Dipendente</th>
-                                    <th style={{ padding: '1.2rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Codice</th>
-                                    <th style={{ padding: '1.2rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Stato</th>
-                                    <th style={{ padding: '1.2rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Azioni</th>
+                                <tr>
+                                    <th>Data / Ora</th>
+                                    <th>Dipendente</th>
+                                    <th>Matricola</th>
+                                    <th>Stato</th>
+                                    <th>Azioni</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {entries.map((entry) => (
-                                    <tr key={entry.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                                        <td style={{ padding: '1.2rem' }}>
-                                            <div style={{ fontWeight: 500 }}>{new Date(entry.timestamp).toLocaleDateString()}</div>
-                                            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{new Date(entry.timestamp).toLocaleTimeString()}</div>
+                                    <tr key={entry.id}>
+                                        <td>
+                                            <div className="font-medium">{new Date(entry.timestamp).toLocaleDateString()}</div>
+                                            <div className="text-muted" style={{ fontSize: '0.85rem' }}>{new Date(entry.timestamp).toLocaleTimeString()}</div>
                                         </td>
-                                        <td style={{ padding: '1.2rem', fontWeight: 'bold' }}>{entry.user.name}</td>
-                                        <td style={{ padding: '1.2rem' }}>
-                                            <span style={{ background: '#f1f5f9', padding: '4px 8px', borderRadius: '6px', fontSize: '0.85rem' }}>
+                                        <td>
+                                            <div className="font-bold">{entry.user.name}</div>
+                                        </td>
+                                        <td>
+                                            <span style={{ background: 'var(--surface-alt)', padding: '4px 8px', borderRadius: '4px', fontSize: '0.85rem', fontFamily: 'monospace' }}>
                                                 {entry.user.code}
                                             </span>
                                         </td>
-                                        <td style={{ padding: '1.2rem' }}>
+                                        <td>
                                             {entry.type === 'IN' ? (
-                                                <span className="status-badge status-in" style={{ fontSize: '0.75rem' }}>ENTRATA</span>
+                                                <span className="status-badge status-in">▶ ENTRATA</span>
                                             ) : (
-                                                <span className="status-badge status-out" style={{ fontSize: '0.75rem' }}>USCITA</span>
+                                                <span className="status-badge status-out">⏹ USCITA</span>
                                             )}
                                         </td>
-                                        <td style={{ padding: '1.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                        <td style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                                             {entry.hasPhoto ? (
                                                 <button
                                                     onClick={() => handleOpenPhoto(entry.id)}
                                                     className="btn btn-secondary"
                                                     disabled={loadingPhoto}
-                                                    style={{ width: 'auto', padding: '8px 16px', fontSize: '0.85rem', marginBottom: 0 }}
+                                                    style={{ padding: '8px 16px', fontSize: '0.8rem' }}
                                                 >
                                                     {loadingPhoto ? '...' : '📸 Foto'}
                                                 </button>
                                             ) : (
-                                                <span style={{ padding: '8px 16px', fontSize: '0.85rem', opacity: 0.3 }}>No Foto</span>
+                                                <span className="text-muted" style={{ padding: '0 10px', fontSize: '0.85rem' }}>No Foto</span>
                                             )}
                                             <button
                                                 onClick={() => handleDelete(entry.id)}
                                                 className="btn btn-ghost"
-                                                style={{ width: 'auto', padding: '8px', color: 'var(--danger)', marginBottom: 0 }}
+                                                style={{ color: 'var(--danger)', padding: '8px 12px' }}
                                                 title="Elimina"
                                             >
                                                 🗑️
@@ -467,14 +460,19 @@ export default function Admin() {
                                 ))}
                                 {entries.length === 0 && !loading && (
                                     <tr>
-                                        <td colSpan={5} style={{ padding: '4rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-                                            Nessuna attività trovata per il periodo selezionato.
+                                        <td colSpan={5} style={{ padding: '4rem', textAlign: 'center' }}>
+                                            <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>📭</div>
+                                            <p className="text-muted">Nessuna attività trovata per i filtri selezionati.</p>
                                         </td>
                                     </tr>
                                 )}
                             </tbody>
                         </table>
-                        {loading && <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--primary)' }}>Caricamento dati in corso...</div>}
+                        {loading && (
+                            <div style={{ padding: '4rem', textAlign: 'center' }}>
+                                <div className="text-muted">Caricamento dati in corso...</div>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -487,54 +485,50 @@ export default function Admin() {
                             left: 0,
                             right: 0,
                             bottom: 0,
-                            background: 'rgba(0,0,0,0.85)',
+                            background: 'rgba(0,0,0,0.8)',
                             zIndex: 1000,
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            padding: '1rem',
-                            backdropFilter: 'blur(8px)'
+                            padding: '2rem',
+                            backdropFilter: 'blur(5px)'
                         }}
                         onClick={() => setSelectedPhoto(null)}
                     >
-                        <div style={{ position: 'relative', maxWidth: '90%', maxHeight: '90%' }}>
+                        <div style={{ position: 'relative', maxWidth: '1000px', width: '100%' }}>
                             <img
                                 src={selectedPhoto}
                                 alt="Prova lavoro"
                                 style={{
-                                    maxWidth: '100%',
-                                    maxHeight: '90vh',
+                                    width: '100%',
+                                    height: 'auto',
                                     borderRadius: '12px',
                                     boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
-                                    border: '4px solid white'
+                                    border: '1px solid white'
                                 }}
                             />
                             <button
                                 onClick={() => setSelectedPhoto(null)}
                                 style={{
                                     position: 'absolute',
-                                    top: '-50px',
-                                    right: '-10px',
-                                    background: 'white',
-                                    color: 'black',
+                                    top: '-40px',
+                                    right: '0',
+                                    background: 'transparent',
+                                    color: 'white',
                                     border: 'none',
-                                    borderRadius: '50%',
-                                    width: '40px',
-                                    height: '40px',
-                                    fontWeight: 'bold',
-                                    cursor: 'pointer',
-                                    fontSize: '1.2rem'
+                                    fontSize: '2rem',
+                                    cursor: 'pointer'
                                 }}
                             >
-                                ✕
+                                ✕ Chiudi
                             </button>
                         </div>
                     </div>
                 )}
 
 
-                <div style={{ marginTop: '3rem', textAlign: 'center', fontSize: '0.8rem', opacity: 0.6, color: 'var(--text-muted)' }}>
-                    Easy Employee Management - Admin Panel
+                <div className="text-center mt-10" style={{ marginTop: '4rem', opacity: 0.5, fontSize: '0.85rem' }}>
+                    Easy Employee Management &copy; {new Date().getFullYear()}
                 </div>
             </div>
         </main>
