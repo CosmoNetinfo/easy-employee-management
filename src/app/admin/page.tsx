@@ -2,6 +2,8 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 export default function Admin() {
     const router = useRouter();
@@ -282,6 +284,62 @@ export default function Admin() {
         document.body.removeChild(link);
     };
 
+    const handleExportPDF = () => {
+        if (entries.length === 0) return;
+
+        const doc = new jsPDF();
+
+        // Title
+        doc.setFontSize(20);
+        doc.setTextColor(30, 41, 59); // var(--primary)
+        doc.text("Report Presenze & Paghe", 14, 22);
+
+        doc.setFontSize(11);
+        doc.setTextColor(100);
+        doc.text(`Generato il: ${new Date().toLocaleDateString()} alle ${new Date().toLocaleTimeString()}`, 14, 30);
+
+        // Summary Table
+        doc.setFontSize(14);
+        doc.setTextColor(0);
+        doc.text("Riepilogo Stipendi", 14, 45);
+
+        const summaryData = summary.userSummaries.map(s => [
+            s.name,
+            `${s.hours.toFixed(2)} h`,
+            `€ ${s.wage.toFixed(2)}`,
+            `€ ${s.salary.toFixed(2)}`
+        ]);
+
+        autoTable(doc, {
+            startY: 50,
+            head: [['Dipendente', 'Ore Totali', 'Paga Oraria', 'Totale Stimato']],
+            body: summaryData,
+            theme: 'striped',
+            headStyles: { fillColor: [59, 130, 246] }, // Blue
+        });
+
+        // Entries Table
+        const finalY = (doc as any).lastAutoTable.finalY || 50;
+        doc.text("Dettaglio Timbrature", 14, finalY + 15);
+
+        const tableData = entries.map(e => [
+            new Date(e.timestamp).toLocaleDateString(),
+            new Date(e.timestamp).toLocaleTimeString(),
+            e.user.name,
+            e.type === 'IN' ? 'ENTRATA' : 'USCITA',
+        ]);
+
+        autoTable(doc, {
+            startY: finalY + 20,
+            head: [['Data', 'Ora', 'Dipendente', 'Stato']],
+            body: tableData,
+            theme: 'grid',
+            headStyles: { fillColor: [30, 41, 59] }, // Dark Slate
+        });
+
+        doc.save(`busta_paga_simulata_${new Date().toISOString().split('T')[0]}.pdf`);
+    };
+
     const handleLogout = () => {
         localStorage.removeItem('user');
         router.push('/');
@@ -474,6 +532,9 @@ export default function Admin() {
                                 </button>
                                 <button type="button" onClick={handleExport} className="btn btn-success" disabled={entries.length === 0}>
                                     📥 Export CSV
+                                </button>
+                                <button type="button" onClick={handleExportPDF} className="btn btn-secondary" disabled={entries.length === 0} style={{ borderColor: 'var(--danger)', color: 'var(--danger)' }}>
+                                    📄 PDF Busta Paga
                                 </button>
                             </div>
                         </form>
