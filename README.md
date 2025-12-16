@@ -19,13 +19,17 @@ L'applicazione è ottimizzata per l'uso da smartphone, permettendo ai dipendenti
 
 ### Per l'Amministratore (Pannello Web)
 *   **Dashboard Completa**: Accessibile via PC con codice amministratore.
+*   **📊 Analisi Visiva**: Grafici interattivi per monitorare le ore lavorate dal team nel periodo.
 *   **Riepilogo Ore e Costi**: Calcolo automatico delle ore lavorate e dello stipendio stimato (configurabile, default 7€/h).
 *   **Gestione Timbrature**:
     *   Elenco cronologico di tutte le entrate e uscite.
+    *   **✏️ Modifica Orari**: Correzione manuale di data e ora in caso di errori.
     *   **Visualizzazione Foto**: Popup integrato per vedere la foto scattata durante la timbratura.
     *   **Eliminazione**: Possibilità di cancellare timbrature errate o di test.
 *   **Filtri Avanzati**: Filtra per data (dal/al) o per singolo dipendente.
-*   **Esportazione**: Scarica tutti i dati in formato **CSV** (Excel) per la contabilità.
+*   **Esportazione Documenti**:
+    *   **CSV**: Dati grezzi per Excel.
+    *   **📄 PDF Busta Paga**: Report professionale impaginato con riepiloghi e dettagli pronto per la stampa.
 
 ## 🛠️ Specifiche Tecniche
 
