@@ -68,8 +68,8 @@ export default function Home() {
             {/* Simple Logo Placeholder - blue letters */}
             <span style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--accent-dark)' }}>Es</span>
           </div>
-          <h1 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: '#1e293b' }}>Dipendente facile</h1>
-          <p style={{ opacity: 0.6 }}>Gestione Presenze Semplice</p>
+          <h1 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: 'var(--text-main)' }}>Dipendente facile</h1>
+          <p style={{ opacity: 0.8, color: 'var(--text-secondary)' }}>Gestione Presenze Semplice</p>
         </div>
 
         {/* Login Form */}
