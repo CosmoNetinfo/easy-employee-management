@@ -190,10 +190,10 @@ export default function Dashboard() {
 
             {/* 4. Bottom Navigation */}
             <div className="bottom-nav animate-slide-up">
-                <Link href="/dashboard" className="nav-item active">
+                <div onClick={() => user && fetchStatus(user.id)} className="nav-item active" style={{ cursor: 'pointer' }}>
                     <span style={{ fontSize: '1.2rem' }}>🏠</span>
                     Home
-                </Link>
+                </div>
                 <Link href="/dashboard/history" className="nav-item">
                     <span style={{ fontSize: '1.2rem' }}>📅</span>
                     Storico
