@@ -291,7 +291,7 @@ export default function Dashboard() {
 
             {/* 4. Bottom Navigation */}
             <div className="bottom-nav animate-slide-up">
-                <div onClick={() => user && fetchStatus(user.id)} className="nav-item active" style={{ cursor: 'pointer' }}>
+                <div onClick={() => { if (user) { setStatus('LOADING'); fetchStatus(user.id); } }} className="nav-item active" style={{ cursor: 'pointer' }}>
                     <span style={{ fontSize: '1.2rem' }}>🏠</span>
                     Home
                 </div>
