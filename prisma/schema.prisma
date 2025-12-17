@@ -17,6 +17,7 @@ model User {
   profileImage String?  @db.Text // Use Text type for base64 strings if needed, though String usually maps to text in Postgres anyway. Let's just use String? but standard prisma String is fine.
   createdAt DateTime @default(now())
   entries   Entry[]
+  messages  Message[]
 }
 
 model Entry {
@@ -26,4 +27,12 @@ model Entry {
   type      String
   timestamp DateTime @default(now())
   photoUrl  String?
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
 }

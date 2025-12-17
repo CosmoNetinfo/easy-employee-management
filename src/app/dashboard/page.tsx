@@ -295,6 +295,10 @@ export default function Dashboard() {
                     <span style={{ fontSize: '1.2rem' }}>🏠</span>
                     Home
                 </div>
+                <Link href="/dashboard/chat" className="nav-item">
+                    <span style={{ fontSize: '1.2rem' }}>💬</span>
+                    Chat
+                </Link>
                 <Link href="/dashboard/history" className="nav-item">
                     <span style={{ fontSize: '1.2rem' }}>📅</span>
                     Storico
