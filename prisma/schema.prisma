@@ -14,6 +14,7 @@ model User {
   code      String   @unique
   role      String   @default("USER")
   hourlyWage Float    @default(7.0)
+  profileImage String?  @db.Text // Use Text type for base64 strings if needed, though String usually maps to text in Postgres anyway. Let's just use String? but standard prisma String is fine.
   createdAt DateTime @default(now())
   entries   Entry[]
 }

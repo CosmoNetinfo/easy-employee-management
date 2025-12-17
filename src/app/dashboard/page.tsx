@@ -86,6 +86,63 @@ export default function Dashboard() {
         }
     };
 
+    const handleProfileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || !e.target.files[0] || !user) return;
+        const file = e.target.files[0];
+
+        try {
+            // 1. Compress/Resize Image
+            const base64Image = await new Promise<string>((resolve) => {
+                const img = new Image();
+                img.src = URL.createObjectURL(file);
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_SIZE = 150; // Thumbnail size
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_SIZE) {
+                            height *= MAX_SIZE / width;
+                            width = MAX_SIZE;
+                        }
+                    } else {
+                        if (height > MAX_SIZE) {
+                            width *= MAX_SIZE / height;
+                            height = MAX_SIZE;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx?.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.7)); // Auto base64
+                };
+            });
+
+            // 2. Upload to API
+            const res = await fetch('/api/user/upload-profile-image', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: user.id, image: base64Image }),
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                // 3. Update Local State
+                const updatedUser = { ...user, profileImage: base64Image };
+                setUser(updatedUser);
+                localStorage.setItem('user', JSON.stringify(updatedUser)); // Persist
+            } else {
+                alert('Errore caricamento foto');
+            }
+        } catch (e) {
+            console.error(e);
+            alert('Errore durante il caricamento');
+        }
+    };
+
     const handleLogout = () => {
         localStorage.removeItem('user');
         router.push('/');
@@ -103,9 +160,53 @@ export default function Dashboard() {
                         <h2 style={{ fontSize: '1.8rem', margin: 0, lineHeight: 1.2 }}>Ciao, <br />
                             <span style={{ color: 'var(--accent-dark)' }}>{user.name.split(' ')[0]}</span></h2>
                     </div>
-                    {/* User Profile Pic Placeholder */}
-                    <div style={{ width: '50px', height: '50px', background: '#e2e8f0', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#64748b', fontSize: '1.2rem' }}>
-                        {user.name.charAt(0)}
+                    {/* User Profile Pic - Clickable */}
+                    <div style={{ position: 'relative' }}>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            id="profileInput"
+                            style={{ display: 'none' }}
+                            onChange={handleProfileUpload}
+                        />
+                        <div
+                            onClick={() => document.getElementById('profileInput')?.click()}
+                            style={{
+                                width: '60px',
+                                height: '60px',
+                                background: user.profileImage ? `url(${user.profileImage}) no-repeat center/cover` : 'var(--surface)',
+                                borderRadius: '50%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontWeight: 'bold',
+                                color: 'var(--text-secondary)',
+                                fontSize: '1.2rem',
+                                border: '2px solid var(--accent)',
+                                cursor: 'pointer',
+                                boxShadow: 'var(--shadow-lg)'
+                            }}
+                        >
+                            {!user.profileImage && user.name.charAt(0)}
+                            {/* Edit Icon Overlay */}
+                            <div style={{
+                                position: 'absolute',
+                                bottom: -2,
+                                right: -2,
+                                background: 'var(--accent)',
+                                width: '20px',
+                                height: '20px',
+                                borderRadius: '50%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '0.7rem',
+                                color: 'white',
+                                border: '2px solid rgba(0,0,0,0.2)'
+                            }}>
+                                ✎
+                            </div>
+                        </div>
                     </div>
                 </div>
 
