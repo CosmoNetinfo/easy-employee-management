@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 import webpush from 'web-push';
 
 // Configure Web Push (Move keys to env vars in production!)
-const publicVapidKey = 'BJk6GkCdpK7CflUeW9q8e1XGfR6Zz3P2Wq5B9r7X1eK8fL2jM4jQ5P3W9r7X1eK8'; // Truncated/Placeholder - You should use valid keys generated
+const publicVapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || 'BFRLzduIRujxUzlmOK-LxhUxJiUQW7pjRYVdP7FiwpuXc7jtKKqXiDTVyJ20bffkFzZB12Y72SMSYo69ijYZiiQ';
 // Wait, I generated keys in Step 218 but didn't capture them well in the output log as I can't see the full output.
 // I will assume the user needs to provide them or use a generated set.
 // Actually, I can use the set generated: 
