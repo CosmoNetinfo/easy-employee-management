@@ -18,6 +18,7 @@ model User {
   createdAt DateTime @default(now())
   entries   Entry[]
   messages  Message[]
+  subscriptions PushSubscription[]
 }
 
 model Entry {
@@ -33,6 +34,15 @@ model Message {
   id        Int      @id @default(autoincrement())
   content   String
   createdAt DateTime @default(now())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model PushSubscription {
+  id        Int      @id @default(autoincrement())
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
 }

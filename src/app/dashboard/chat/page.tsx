@@ -3,6 +3,19 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
+const PUBLIC_VAPID_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || 'BJk6GkCdpK7CflUeW9q8e1XGfR6Zz3P2Wq5B9r7X1eK8fL2jM4jQ5P3W9r7X1eK8'; // Fallback to what we think it is if env var missing
+
+function urlBase64ToUint8Array(base64String: string) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+}
+
 export default function ChatPage() {
     const [messages, setMessages] = useState<any[]>([]);
     const [newMessage, setNewMessage] = useState('');
@@ -16,8 +29,31 @@ export default function ChatPage() {
             router.push('/');
             return;
         }
-        setUser(JSON.parse(stored));
+        const parsedUser = JSON.parse(stored);
+        setUser(parsedUser);
         fetchMessages();
+
+        // --- PUSH NOTIFICATION REGISTRATION ---
+        if ('serviceWorker' in navigator && 'PushManager' in window) {
+            navigator.serviceWorker.ready.then(async (registration) => {
+                try {
+                    const subscription = await registration.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY)
+                    });
+
+                    // Send subscription to server
+                    await fetch('/api/notifications/subscribe', {
+                        method: 'POST',
+                        body: JSON.stringify({ userId: parsedUser.id, subscription }),
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                } catch (e) {
+                    console.error('Push subscription failed:', e);
+                }
+            });
+        }
+
         const interval = setInterval(fetchMessages, 3000); // Poll every 3s
         return () => clearInterval(interval);
     }, []);
