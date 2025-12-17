@@ -15,8 +15,8 @@ const publicVapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || 'BFRLzduIRujx
 
 webpush.setVapidDetails(
     'mailto:test@example.com',
-    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || '',
-    process.env.VAPID_PRIVATE_KEY || ''
+    publicVapidKey,
+    process.env.VAPID_PRIVATE_KEY || '5z2fzY2RiAaj22dYXXiGW_H7xQ74GjvNeYaGDQHYg6Y'
 );
 
 // GET: Fetch recent messages (unchanged)
