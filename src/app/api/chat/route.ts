@@ -3,21 +3,8 @@ import { prisma } from '@/lib/prisma';
 import webpush from 'web-push';
 
 // Configure Web Push (Move keys to env vars in production!)
-const publicVapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || 'BFRLzduIRujxUzlmOK-LxhUxJiUQW7pjRYVdP7FiwpuXc7jtKKqXiDTVyJ20bffkFzZB12Y72SMSYo69ijYZiiQ';
-// Wait, I generated keys in Step 218 but didn't capture them well in the output log as I can't see the full output.
-// I will assume the user needs to provide them or use a generated set.
-// Actually, I can use the set generated: 
-// Public: B... (partially visible)
-// Private: ...
-// To be safe and since I cannot see the output of step 218 fully, I will instruct the user to set ENV vars or I will generate a new set via node script and console.log them to capture.
-// BUT, for now, I will use ENV variables in the code so the user can set them in Vercel.
-// Environment Variables: NEXT_PUBLIC_VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY
-
-webpush.setVapidDetails(
-    'mailto:test@example.com',
-    publicVapidKey,
-    process.env.VAPID_PRIVATE_KEY || '5z2fzY2RiAaj22dYXXiGW_H7xQ74GjvNeYaGDQHYg6Y'
-);
+// Configure Web Push lazily in the POST handler
+// to avoid build-time errors if env vars are missing.
 
 // GET: Fetch recent messages (unchanged)
 export async function GET() {
@@ -59,28 +46,43 @@ export async function POST(request: Request) {
         });
 
         // --- SEND PUSH NOTIFICATIONS ---
-        // 1. Get all subscriptions EXCEPT the sender
-        const subscriptions = await prisma.pushSubscription.findMany({
-            where: {
-                userId: { not: parseInt(userId) }
+        // Only run if keys are configured
+        if (process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
+            try {
+                webpush.setVapidDetails(
+                    'mailto:test@example.com',
+                    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+                    process.env.VAPID_PRIVATE_KEY
+                );
+
+                // 1. Get all subscriptions EXCEPT the sender
+                const subscriptions = await prisma.pushSubscription.findMany({
+                    where: {
+                        userId: { not: parseInt(userId) }
+                    }
+                });
+
+                // 2. Prepare payload
+                const payload = JSON.stringify({
+                    title: `Nuovo messaggio da ${message.user.name}`,
+                    body: content.length > 30 ? content.substring(0, 30) + '...' : content,
+                    url: '/dashboard/chat'
+                });
+
+                // 3. Send to all
+                subscriptions.forEach(sub => {
+                    const pushConfig = {
+                        endpoint: sub.endpoint,
+                        keys: { auth: sub.auth, p256dh: sub.p256dh }
+                    };
+                    webpush.sendNotification(pushConfig, payload).catch(err => console.error('Push failed', err));
+                });
+            } catch (pushError) {
+                console.error('Push notification setup failed', pushError);
             }
-        });
-
-        // 2. Prepare payload
-        const payload = JSON.stringify({
-            title: `Nuovo messaggio da ${message.user.name}`,
-            body: content.length > 30 ? content.substring(0, 30) + '...' : content,
-            url: '/dashboard/chat'
-        });
-
-        // 3. Send to all
-        subscriptions.forEach(sub => {
-            const pushConfig = {
-                endpoint: sub.endpoint,
-                keys: { auth: sub.auth, p256dh: sub.p256dh }
-            };
-            webpush.sendNotification(pushConfig, payload).catch(err => console.error('Push failed', err));
-        });
+        } else {
+            console.warn("Push notifications skipped: VAPID keys missing in env");
+        }
 
         return NextResponse.json(message);
     } catch (error) {
