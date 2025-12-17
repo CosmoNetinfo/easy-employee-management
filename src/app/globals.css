@@ -1,45 +1,57 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  /* Premium Fintech Theme - FORCE DARK MODE */
-  --background: #0f172a;
-  --surface: #1e293b;
-  --surface-translucent: rgba(30, 41, 59, 0.9);
-  --surface-alt: #334155;
+  /* --- GLOBAL PURPLE THEME VARIABLES --- */
 
-  /* Brand Colors */
-  --primary: #1e293b;
-  --accent: #3b82f6;
-  --accent-dark: #2563eb;
-  --accent-gradient: linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%);
-  --accent-light: rgba(59, 130, 246, 0.2);
+  /* Backgrounds */
+  --bg-main: #240046;
+  --bg-gradient: linear-gradient(135deg, #10002b 0%, #240046 100%);
 
-  /* Status Colors */
+  /* Mapped Standard Variables */
+  --background: #10002b;
+  --surface: rgba(60, 9, 108, 0.4);
+  /* Glassy surface */
+  --surface-alt: rgba(36, 0, 70, 0.6);
+  --surface-hover: rgba(60, 9, 108, 0.6);
+
+  /* Text Colors */
+  --text-main: #ffffff;
+  --text-secondary: #e9d5ff;
+  /* Light lavender */
+  --text-muted: #c0a0e0;
+  --text-inverse: #ffffff;
+
+  /* Brand / Accent Colors */
+  --primary: #9d4edd;
+  --accent: #e0aaff;
+  --accent-dark: #7b2cbf;
+  --accent-gradient: linear-gradient(90deg, #9d4edd 0%, #e0aaff 100%);
+
+  /* Status Colors (Kept vivid for contrast on dark bg) */
   --success: #4ade80;
   --success-dark: #22c55e;
-  --success-bg: rgba(34, 197, 94, 0.2);
-  --danger: #ef4444;
-  --danger-dark: #dc2626;
-  --danger-bg: rgba(239, 68, 68, 0.2);
+  --success-bg: rgba(74, 222, 128, 0.1);
+  --danger: #f87171;
+  --danger-dark: #ef4444;
+  --danger-bg: rgba(248, 113, 113, 0.1);
 
-  /* Text */
-  --text-main: #f1f5f9;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --text-inverse: #0f172a;
-
-  /* UI */
-  --border: #334155;
+  /* UI Elements */
+  --border: rgba(255, 255, 255, 0.1);
   --radius: 24px;
   --radius-sm: 12px;
   --radius-full: 9999px;
 
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-  --shadow-blue: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
-  --shadow-green: 0 15px 30px -5px rgba(34, 197, 94, 0.4);
-  --shadow-red: 0 15px 30px -5px rgba(239, 68, 68, 0.3);
+  /* Shadows - Glowing Purple/Pink */
+  --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 30px -5px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 20px rgba(157, 78, 221, 0.3);
+  --shadow-red: 0 10px 25px -5px rgba(239, 68, 68, 0.4);
+  --shadow-green: 0 10px 25px -5px rgba(34, 197, 94, 0.4);
+
+  /* Specific Input Vars */
+  --input-bg: rgba(255, 255, 255, 0.95);
+  --input-text: #240046;
+  --input-placeholder: #5a5a5a;
 }
 
 * {
@@ -51,7 +63,9 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  background-color: var(--background);
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  /* Keep gradient fixed on scroll */
   color: var(--text-main);
   min-height: 100vh;
   display: flex;
@@ -61,128 +75,177 @@ body {
   overflow-x: hidden;
 }
 
-/* Mobile-First Layout Focus */
+/* --- SHARED LAYOUT COMPONENTS --- */
+
+/* Mobile Container */
 .mobile-container {
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
   min-height: 100vh;
-  background: var(--background);
   position: relative;
   display: flex;
   flex-direction: column;
-  padding-bottom: 80px;
-  /* Space for bottom nav */
+  padding-bottom: 90px;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Glass Card */
+.card {
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow-lg);
+  color: var(--text-main);
+  transition: transform 0.2s;
 }
 
 /* Typography */
-h1 {
-  font-size: 2.2rem;
-  font-weight: 700;
+h1,
+h2,
+h3 {
   color: var(--text-main);
-}
-
-h2 {
-  font-size: 1.8rem;
   font-weight: 700;
-  margin-bottom: 0.5rem;
 }
 
 p {
   color: var(--text-secondary);
 }
 
-/* --- Special Mobile Elements (From Image) --- */
-
-/* 1. Blue Wave Background */
-.blue-wave-header {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 35vh;
-  background: var(--accent-gradient);
-  border-bottom-left-radius: 40px;
-  border-bottom-right-radius: 40px;
-  z-index: 0;
-  overflow: hidden;
+.text-muted {
+  color: var(--text-muted);
 }
 
-.blue-wave-header::after {
-  content: '';
-  position: absolute;
-  top: -20%;
-  right: -10%;
-  width: 300px;
-  height: 300px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
-  filter: blur(40px);
+/* --- FORMS & INPUTS --- */
+
+/* Standard Inputs (Admin/Dashboard) */
+input:not([type="checkbox"]):not([type="radio"]),
+select {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.2);
+  color: white;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.2s ease;
 }
 
-/* 2. Login Card & Inputs */
-.login-content {
-  position: relative;
-  z-index: 10;
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-height: 100vh;
-  text-align: center;
+input:focus,
+select:focus {
+  border-color: var(--accent);
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 0 2px rgba(224, 170, 255, 0.2);
 }
 
-.logo-circle {
-  width: 100px;
-  height: 100px;
-  background: var(--surface);
-  border-radius: 50%;
-  margin: 0 auto 1.5rem;
-  display: flex;
+/* Login Page Specific Inputs (Cream/White) */
+.custom-input {
+  background: var(--input-bg) !important;
+  color: var(--input-text) !important;
+  border: none !important;
+}
+
+/* Fix for date inputs to ensure text is white on dark bg */
+input[type="date"],
+input[type="datetime-local"] {
+  color-scheme: dark;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin-left: 2px;
+}
+
+/* --- BUTTONS --- */
+
+.btn {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow-lg);
-}
-
-.pill-input {
-  width: 100%;
-  padding: 16px 24px;
-  border-radius: var(--radius-full);
-  border: 1px solid transparent;
-  background: var(--surface);
-  box-shadow: var(--shadow-sm);
-  font-size: 1rem;
-  margin-bottom: 1rem;
-  text-align: center;
-  outline: none;
-  transition: all 0.2s;
-}
-
-.pill-input:focus {
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
-}
-
-.btn-pill-primary {
-  width: 100%;
-  padding: 18px;
-  border-radius: var(--radius-full);
-  background: var(--accent-dark);
-  color: white;
+  padding: 12px 24px;
+  border-radius: var(--radius-sm);
   font-weight: 600;
-  font-size: 1.1rem;
-  border: none;
-  box-shadow: var(--shadow-blue);
+  font-size: 0.95rem;
   cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  gap: 8px;
 }
 
-.btn-pill-primary:hover {
+.btn-primary {
+  background: var(--accent-gradient);
+  color: white;
+  /* Text on purple gradient */
+  box-shadow: var(--shadow-glow);
+}
+
+.btn-primary:hover {
   filter: brightness(1.1);
+  transform: translateY(-1px);
 }
 
-/* 3. Dashboard Sphere/Bubble */
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+}
+
+.btn-danger {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.3);
+}
+
+.btn-success {
+  background: rgba(34, 197, 94, 0.2);
+  color: #86efac;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+/* Login Page Specific Buttons */
+.btn-primary-gradient {
+  background: var(--accent-gradient);
+  color: white;
+}
+
+/* --- DASHBOARD SPECIFIC --- */
+
+/* Sphere */
 .status-sphere {
-  width: 280px;
-  height: 280px;
+  width: 260px;
+  height: 260px;
   border-radius: 50%;
   margin: 2rem auto;
   display: flex;
@@ -190,49 +253,30 @@ p {
   align-items: center;
   justify-content: center;
   position: relative;
-  box-shadow: var(--shadow-green);
   transition: all 0.5s ease;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .sphere-in {
-  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 25%),
-    linear-gradient(135deg, #86efac 0%, #22c55e 100%);
+  background: radial-gradient(circle at 30% 30%, rgba(134, 239, 172, 0.4), rgba(34, 197, 94, 0.1) 60%);
+  box-shadow: 0 0 50px rgba(34, 197, 94, 0.3);
+  border-color: rgba(34, 197, 94, 0.3);
 }
 
 .sphere-out {
-  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 25%),
-    linear-gradient(135deg, #fca5a5 0%, #ef4444 100%);
-  box-shadow: var(--shadow-red);
-}
-
-.sphere-glass-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: 50%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
-  pointer-events: none;
-}
-
-.status-text-label {
-  color: white;
-  font-size: 0.9rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 0.2rem;
-  opacity: 0.9;
+  background: radial-gradient(circle at 30% 30%, rgba(252, 165, 165, 0.4), rgba(239, 68, 68, 0.1) 60%);
+  box-shadow: 0 0 50px rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.3);
 }
 
 .status-text-main {
-  color: white;
   font-size: 2.2rem;
   font-weight: 800;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  letter-spacing: 1px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* 4. Large Dashboard Buttons */
+/* Action Grid Buttons */
 .action-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -252,6 +296,8 @@ p {
   border: none;
   cursor: pointer;
   transition: transform 0.1s;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .btn-square-lg:active {
@@ -259,43 +305,42 @@ p {
 }
 
 .btn-red {
-  background: #ef4444;
-  color: white;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.8) 0%, rgba(185, 28, 28, 0.9) 100%);
   box-shadow: var(--shadow-red);
 }
 
 .btn-green {
-  background: #22c55e;
-  color: white;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.8) 0%, rgba(21, 128, 61, 0.9) 100%);
   box-shadow: var(--shadow-green);
 }
 
 .btn-glass {
-  background: var(--surface);
-  color: var(--text-main);
-  box-shadow: var(--shadow-lg);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
 }
 
-/* 5. Bottom Navigation Stub */
+/* Bottom Nav */
 .bottom-nav {
-  position: sticky;
-  bottom: 0;
-  margin-top: auto;
-  /* Ensures it sits at the bottom if content is short */
-  width: 100%;
-  max-width: 480px;
-  /* Inherits parent constraint effectively but safeguards it */
-  height: 80px;
-  background: var(--surface);
-  border-top-left-radius: 30px;
-  border-top-right-radius: 30px;
-  box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.05);
+  position: fixed;
+  /* Fixed for glass effect over content */
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  margin: 0 auto;
+  max-width: 440px;
+  height: 70px;
+  background: rgba(20, 0, 50, 0.8);
+  /* Dark purple glass */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 35px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: space-around;
   align-items: center;
   z-index: 100;
-  padding-bottom: 10px;
-  /* Removed left/transform centering as sticky respects parent layout */
+  padding: 0 10px;
 }
 
 .nav-item {
@@ -303,87 +348,50 @@ p {
   flex-direction: column;
   align-items: center;
   font-size: 0.75rem;
-  color: var(--text-secondary);
-  gap: 6px;
+  color: rgba(255, 255, 255, 0.5);
+  gap: 4px;
   text-decoration: none;
   font-weight: 500;
+  transition: color 0.2s;
 }
 
 .nav-item.active {
-  color: var(--accent-dark);
+  color: #e0aaff;
 }
 
-/* --- Admin Panel Compat (Keep some basics) --- */
-.container {
+/* --- TABLES --- */
+.table-container {
+  overflow-x: auto;
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+table {
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
+  border-collapse: collapse;
 }
 
-.card {
-  background: var(--surface);
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: var(--shadow-lg);
+th,
+td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-size: 0.85rem;
+th {
+  background: rgba(255, 255, 255, 0.05);
   color: var(--text-secondary);
   font-weight: 600;
-  margin-left: 2px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-input:not(.pill-input),
-select {
-  width: 100%;
-  padding: 14px 16px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text-main);
-  font-size: 0.95rem;
-  outline: none;
-  transition: all 0.2s ease;
+tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
 }
 
-.btn:not(.btn-pill-primary):not(.btn-square-lg) {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 14px 28px;
-  border-radius: var(--radius-sm);
-  font-weight: 600;
-  font-size: 0.95rem;
-  cursor: pointer;
-  border: none;
-}
-
-.btn-primary {
-  background: var(--accent-gradient);
-  color: white;
-}
-
-.btn-secondary {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--text-main);
-}
-
-.btn-ghost {
-  background: transparent;
-  color: var(--text-secondary);
-  border: none;
-}
-
-.btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--text-main);
-}
-
+/* Status Badges */
 .status-badge {
   padding: 4px 8px;
   border-radius: 12px;
@@ -392,16 +400,206 @@ select {
 }
 
 .status-in {
-  background: #dcfce7;
-  color: #166534;
+  background: rgba(34, 197, 94, 0.2);
+  color: #86efac;
 }
 
 .status-out {
-  background: #fee2e2;
-  color: #991b1b;
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
 }
 
-/* Util */
+/* Login Page Selectors - Premium Polish */
+.purple-login-container {
+  width: 100%;
+  max-width: 380px;
+  /* Slightly tighter for mobile feel */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 2rem;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+}
+
+@media (min-width: 480px) {
+  .purple-login-container {
+    min-height: auto;
+    border-radius: 46px;
+    /* High curvature like iOS/Modern apps */
+    background: rgba(60, 9, 108, 0.6);
+    /* Translucent purple */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow:
+      0 30px 60px rgba(0, 0, 0, 0.6),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    margin: 4rem auto;
+  }
+}
+
+.login-title {
+  font-size: 2.8rem;
+  font-weight: 800;
+  margin-bottom: 0.2rem;
+  letter-spacing: -1.5px;
+  background: linear-gradient(to bottom, #ffffff 0%, #e9d5ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.login-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  text-align: center;
+  margin-bottom: 2.5rem;
+  line-height: 1.4;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+.icon-box {
+  width: 85px;
+  height: 85px;
+  background: linear-gradient(145deg, #d946ef 0%, #7c3aed 100%);
+  border-radius: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  box-shadow:
+    0 15px 35px rgba(124, 58, 237, 0.4),
+    inset 0 2px 4px rgba(255, 255, 255, 0.3);
+  transform: rotate(-5deg);
+  /* Playful tilt often seen in these designs */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.icon-box svg {
+  color: white;
+  width: 42px;
+  height: 42px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.input-group {
+  width: 100%;
+  margin-bottom: 1.2rem;
+}
+
+.custom-input {
+  width: 100%;
+  background: #ffffff !important;
+  color: #333 !important;
+  border: none !important;
+  border-radius: 20px !important;
+  padding: 18px 24px !important;
+  font-size: 1.05rem !important;
+  font-weight: 500 !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+  transition: transform 0.2s, box-shadow 0.2s !important;
+}
+
+.custom-input::placeholder {
+  color: #888;
+  font-weight: 400;
+}
+
+.custom-input:focus {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15) !important;
+  outline: none;
+}
+
+/* --- BUTTONS: The "Like the Photo" Style --- */
+
+/* 1. Secondary/Glass (Camera Button) */
+.btn-glass-secondary {
+  width: 100%;
+  height: 64px;
+  background: rgba(255, 255, 255, 0.15);
+  /* Milky glass */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 24px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Centered like typically requested */
+  gap: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.btn-glass-secondary:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+/* 2. Primary/Gradient (Enter Button) - Same shape, Vivid Fill */
+.btn-glass-primary {
+  width: 100%;
+  height: 64px;
+  background: linear-gradient(90deg, #a855f7 0%, #d946ef 100%);
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  /* Top highlight */
+  border-radius: 24px;
+  /* Same rounded shape as inputs */
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+  box-shadow:
+    0 10px 25px -5px rgba(168, 85, 247, 0.5),
+    0 5px 10px -5px rgba(0, 0, 0, 0.5);
+  /* Deep shadow */
+  transition: all 0.2s;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.btn-glass-primary:hover {
+  background: linear-gradient(90deg, #9333ea 0%, #c026d3 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px -5px rgba(168, 85, 247, 0.6);
+}
+
+.helper-text {
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  opacity: 0.8;
+}
+
+.error-box {
+  background: rgba(220, 38, 38, 0.2);
+  border: 1px solid rgba(220, 38, 38, 0.5);
+  color: #ffcccc;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  width: 100%;
+  text-align: center;
+}
+
+/* Utilities */
 .mb-4 {
   margin-bottom: 1rem;
 }
@@ -414,8 +612,8 @@ select {
   text-align: center;
 }
 
-.text-muted {
-  color: var(--text-muted);
+.animate-slide-up {
+  animation: slideUp 0.5s ease forwards;
 }
 
 @keyframes slideUp {
@@ -430,60 +628,16 @@ select {
   }
 }
 
-.animate-slide-up {
-  animation: slideUp 0.5s ease forwards;
-}
-
-/* Table Styles */
-.table-container {
-  overflow-x: auto;
-  width: 100%;
-}
-
-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  margin-top: 1rem;
-}
-
-th,
-td {
-  padding: 1rem;
-  text-align: left;
-  border-bottom: 1px solid var(--border);
-}
-
-th {
-  background-color: var(--surface-alt);
-  font-weight: 600;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  font-size: 0.75rem;
-  letter-spacing: 0.05em;
-}
-
-th:first-child {
-  border-top-left-radius: 12px;
-}
-
-th:last-child {
-  border-top-right-radius: 12px;
-}
-
-tr:last-child td {
-  border-bottom: none;
-}
-
-/* Desktop overrides */
-@media (min-width: 768px) {
-  .mobile-container {
-    max-width: 100%;
-    min-height: auto;
-    /* On desktop, keep same mobile look but in center */
-    max-width: 480px;
-    margin: 0 auto;
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
-    min-height: 100vh;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
 }
