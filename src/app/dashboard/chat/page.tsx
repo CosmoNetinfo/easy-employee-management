@@ -33,23 +33,30 @@ export default function ChatPage() {
         setUser(parsedUser);
         fetchMessages();
 
-        // --- PUSH NOTIFICATION REGISTRATION ---
+        // --- PUSH NOTIFICATION REGISTRATION (AUTO-FIX) ---
         if ('serviceWorker' in navigator && 'PushManager' in window) {
             navigator.serviceWorker.ready.then(async (registration) => {
                 try {
+                    // 1. Force Unsubscribe old/mismatched keys
+                    const existingSub = await registration.pushManager.getSubscription();
+                    if (existingSub) {
+                        await existingSub.unsubscribe();
+                    }
+
+                    // 2. Subscribe with NEW correct key
                     const subscription = await registration.pushManager.subscribe({
                         userVisibleOnly: true,
                         applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY)
                     });
 
-                    // Send subscription to server
+                    // 3. Send new subscription to server
                     await fetch('/api/notifications/subscribe', {
                         method: 'POST',
                         body: JSON.stringify({ userId: parsedUser.id, subscription }),
                         headers: { 'Content-Type': 'application/json' }
                     });
                 } catch (e) {
-                    console.error('Push subscription failed:', e);
+                    console.error('Push subscription auto-fix failed:', e);
                 }
             });
         }
