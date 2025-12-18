@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-const PUBLIC_VAPID_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || 'BFRLzduIRujxUzlmOK-LxhUxJiUQW7pjRYVdP7FiwpuXc7jtKKqXiDTVyJ20bffkFzZB12Y72SMSYo69ijYZiiQ';
+const PUBLIC_VAPID_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || 'BOv-BgSln0t15CXDT4_4yb0BYvapbSD850T_u4_3j30WC_e0UrltCi9sBkBVu0lIJPdjuS6RwM75OdXStzmK7Qc';
 
 function urlBase64ToUint8Array(base64String: string) {
     const padding = '='.repeat((4 - base64String.length % 4) % 4);
