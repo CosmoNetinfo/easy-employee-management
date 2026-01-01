@@ -285,6 +285,12 @@ export default function Dashboard() {
                             <span style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📅</span>
                             Vedi Storico
                         </Link>
+
+                        {/* Button 3: View Payments */}
+                        <Link href="/dashboard/payments" className="btn-square-lg btn-glass" style={{ textDecoration: 'none', background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1))' }}>
+                            <span style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>💰</span>
+                            Pagamenti
+                        </Link>
                     </div>
                 )}
             </div>
@@ -299,9 +305,9 @@ export default function Dashboard() {
                     <span style={{ fontSize: '1.2rem' }}>💬</span>
                     Chat
                 </Link>
-                <Link href="/dashboard/history" className="nav-item">
-                    <span style={{ fontSize: '1.2rem' }}>📅</span>
-                    Storico
+                <Link href="/dashboard/payments" className="nav-item">
+                    <span style={{ fontSize: '1.2rem' }}>💰</span>
+                    Pagamenti
                 </Link>
                 <div onClick={handleLogout} className="nav-item" style={{ cursor: 'pointer' }}>
                     <span style={{ fontSize: '1.2rem' }}>👤</span>

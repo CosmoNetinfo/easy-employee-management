@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import PaymentsManagement from './PaymentsManagement';
 
 export default function Admin() {
     const router = useRouter();
@@ -16,6 +17,7 @@ export default function Admin() {
     const [selectedUserId, setSelectedUserId] = useState('');
 
     const [showUsers, setShowUsers] = useState(false);
+    const [showPayments, setShowPayments] = useState(false);
 
     // Edit Feature State
     const [editingEntry, setEditingEntry] = useState<any>(null);
@@ -356,6 +358,9 @@ export default function Admin() {
                         <p className="text-muted">Gestione completa dipendenti e buste paga</p>
                     </div>
                     <div style={{ display: 'flex', gap: '0.8rem' }}>
+                        <button onClick={() => setShowPayments(!showPayments)} className={`btn ${showPayments ? 'btn-primary' : 'btn-secondary'}`}>
+                            {showPayments ? 'Chiudi Pagamenti' : '💰 Gestione Pagamenti'}
+                        </button>
                         <button onClick={() => setShowUsers(!showUsers)} className={`btn ${showUsers ? 'btn-primary' : 'btn-secondary'}`}>
                             {showUsers ? 'Chiudi Dipendenti' : '👥 Gestione Dipendenti'}
                         </button>
@@ -389,6 +394,11 @@ export default function Admin() {
                             </div>
                         </div>
                     </div>
+                )}
+
+                {/* Payments Management Section */}
+                {showPayments && (
+                    <PaymentsManagement users={users} />
                 )}
 
                 {/* Users Wage Section */}

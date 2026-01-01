@@ -19,6 +19,7 @@ model User {
   entries   Entry[]
   messages  Message[]
   subscriptions PushSubscription[]
+  payments  Payment[]
 }
 
 model Entry {
@@ -45,4 +46,16 @@ model PushSubscription {
   auth      String
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
+}
+
+model Payment {
+  id          Int      @id @default(autoincrement())
+  amount      Float
+  paymentDate DateTime @default(now())
+  periodStart DateTime
+  periodEnd   DateTime
+  notes       String?
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
 }
