@@ -13,23 +13,27 @@ export async function GET(request: Request) {
             return NextResponse.json({ error: 'User ID required' }, { status: 400 });
         }
 
-        const entries = await prisma.entry.findMany({
-            where: {
-                userId: parseInt(userId)
-            },
-            select: {
-                id: true,
-                type: true,
-                timestamp: true,
-                // We don't need user details here as we know who we are
-            },
-            orderBy: {
-                timestamp: 'desc',
-            },
-            take: 100, // Limit to last 100 entries for performance
-        });
+        const [entries, user] = await Promise.all([
+            prisma.entry.findMany({
+                where: { userId: parseInt(userId) },
+                select: {
+                    id: true,
+                    type: true,
+                    timestamp: true,
+                },
+                orderBy: { timestamp: 'desc' },
+                take: 100,
+            }),
+            prisma.user.findUnique({
+                where: { id: parseInt(userId) },
+                select: { hourlyWage: true },
+            }),
+        ]);
 
-        return NextResponse.json(entries);
+        return NextResponse.json({
+            entries,
+            hourlyWage: user?.hourlyWage ?? 7.0,
+        });
     } catch (error) {
         return NextResponse.json({ error: 'Failed to fetch history' }, { status: 500 });
     }
