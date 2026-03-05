@@ -1,4 +1,4 @@
-const CACHE_NAME = 'easy-employee-v1';
+const CACHE_NAME = 'easy-employee-v2';
 const urlsToCache = [
     '/',
     '/globals.css'
@@ -31,8 +31,8 @@ self.addEventListener('push', function (event) {
     const title = data.title || 'Nuovo messaggio';
     const options = {
         body: data.body,
-        icon: '/icon-192x192.png',
-        badge: '/icon-192x192.png',
+        icon: '/pwa-icon-192.png',
+        badge: '/pwa-icon-192.png',
         data: { url: data.url }
     };
     event.waitUntil(self.registration.showNotification(title, options));

@@ -16,6 +16,10 @@ export const metadata: Metadata = {
   title: "Easy Employee Management",
   description: "Gestione facile dei dipendenti",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/pwa-icon-192.png",
+    apple: "/pwa-icon-192.png",
+  },
 };
 
 export const viewport = {
