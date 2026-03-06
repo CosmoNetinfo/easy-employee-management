@@ -52,6 +52,7 @@ export default function Home() {
         setLoading(false);
       }
     } catch (err) {
+      console.error('Login error:', err);
       setError('Errore di connessione');
       setLoading(false);
     }

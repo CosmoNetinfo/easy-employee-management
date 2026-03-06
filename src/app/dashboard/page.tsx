@@ -27,16 +27,11 @@ export default function Dashboard() {
     const router = useRouter();
 
     const fetchStatus = async (userId: number) => {
-        console.log('Fetching status for user:', userId);
-        if (!navigator.onLine) {
-            console.log('Offline: skipping status fetch');
-            return;
-        }
+        if (!navigator.onLine) return;
         try {
             const res = await fetch(`/api/status?userId=${userId}`);
             if (!res.ok) throw new Error(`Status API error: ${res.status}`);
             const data = await res.json();
-            console.log('Status received:', data);
             setStatus(data.status); 
             setLastEntry(data.lastEntry);
         } catch (e) {
@@ -170,15 +165,12 @@ export default function Dashboard() {
             formData.append('image', compressedFile);
 
             try {
-                console.log('Sending clock entry to server...');
                 const res = await fetch('/api/clock', {
                     method: 'POST',
                     body: formData,
                 });
 
-                console.log('Server response status:', res.status);
                 if (res.ok) {
-                    console.log('Clock success, refreshing status...');
                     await fetchStatus(user.id);
                 } else {
                     const errorText = await res.text();
