@@ -1,7 +1,5 @@
 const CACHE_NAME = 'easy-employee-v2';
 const urlsToCache = [
-    '/',
-    '/dashboard',
     '/manifest.json',
     '/pwa-icon-192.png',
     '/pwa-icon-512.png'
@@ -26,33 +24,25 @@ self.addEventListener('activate', event => {
             );
         })
     );
+    self.clients.claim();
 });
 
 self.addEventListener('fetch', event => {
     // Skip cross-origin requests
     if (!event.request.url.startsWith(self.location.origin)) return;
 
-    // IMPORTANT: NEVER intercept API calls. Let the browser handle them naturally.
-    if (event.request.url.includes('/api/')) {
+    // NEVER intercept API calls or non-GET requests
+    if (event.request.url.includes('/api/') || event.request.method !== 'GET') {
         return; 
     }
 
     event.respondWith(
         caches.match(event.request)
             .then(response => {
-                // Return cached response if found
                 if (response) {
                     return response;
                 }
-
-                // Otherwise fetch from network
-                return fetch(event.request).catch(err => {
-                    // If network fails and it's a page navigation, return dashboard/root
-                    if (event.request.mode === 'navigate') {
-                        return caches.match('/dashboard') || caches.match('/');
-                    }
-                    throw err;
-                });
+                return fetch(event.request);
             })
     );
 });

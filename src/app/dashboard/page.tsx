@@ -86,8 +86,10 @@ export default function Dashboard() {
             return;
         }
         const parsedUser = JSON.parse(stored);
-        setUser(parsedUser);
-        fetchStatus(parsedUser.id);
+        if (!user) setUser(parsedUser);
+
+        // Fetch status once on mount
+        if (!lastEntry) fetchStatus(parsedUser.id);
 
         // Network status listeners
         const handleOnline = () => {
@@ -100,8 +102,8 @@ export default function Dashboard() {
         window.addEventListener('offline', handleOffline);
         setIsOnline(navigator.onLine);
 
-        // Initial sync attempt
-        if (navigator.onLine) {
+        // Initial sync attempt - only if online and we haven't synced yet
+        if (navigator.onLine && !isSyncing) {
             syncOfflineEntries();
         }
 
@@ -109,7 +111,7 @@ export default function Dashboard() {
             window.removeEventListener('online', handleOnline);
             window.removeEventListener('offline', handleOffline);
         };
-    }, [syncOfflineEntries, router]);
+    }, []); // Run once on mount
 
     const handleNativeClock = async (type: 'IN' | 'OUT', file: File) => {
         if (!user) return;
