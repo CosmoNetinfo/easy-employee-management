@@ -157,19 +157,38 @@ export default function Dashboard() {
             }
 
             const formData = new FormData();
-            formData.append('userId', user.id);
+            formData.append('userId', String(user.id));
             formData.append('type', type);
             formData.append('image', compressedFile);
 
-            const res = await fetch('/api/clock', {
-                method: 'POST',
-                body: formData,
-            });
+            try {
+                const res = await fetch('/api/clock', {
+                    method: 'POST',
+                    body: formData,
+                });
 
-            if (res.ok) {
-                await fetchStatus(user.id);
-            } else {
-                alert('Errore timbratura');
+                if (res.ok) {
+                    await fetchStatus(user.id);
+                } else {
+                    // Fallback to offline if server error
+                    throw new Error('Server error');
+                }
+            } catch (err) {
+                console.warn('Network or server error, saving offline...', err);
+                await saveOfflineEntry({
+                    userId: user.id,
+                    type,
+                    timestamp: new Date().toISOString(),
+                    imageBlob: compressedFile,
+                    imageType: 'image/jpeg'
+                });
+                alert('🔴 Salvataggio Locale: Errore di connessione o del server. La timbratura è stata salvata sul telefono.');
+                setStatus(type === 'IN' ? 'IN' : 'OUT');
+                setLastEntry({ 
+                    id: Date.now(), 
+                    timestamp: new Date().toISOString(),
+                    type: type
+                });
             }
         } catch (e) {
             alert('Errore di connessione');
