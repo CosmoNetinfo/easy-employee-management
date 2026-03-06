@@ -359,17 +359,17 @@ export default function Admin() {
                         <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Pannello di Controllo</h1>
                         <p className="text-muted">Gestione completa dipendenti e buste paga</p>
                     </div>
-                    <div style={{ display: 'flex', gap: '0.8rem' }}>
-                        <button onClick={() => setShowPayments(!showPayments)} className={`btn ${showPayments ? 'btn-primary' : 'btn-secondary'}`}>
+                    <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap' }}>
+                        <button onClick={() => setShowPayments(!showPayments)} style={{ flex: '1 1 auto', minWidth: 'max-content' }} className={`btn ${showPayments ? 'btn-primary' : 'btn-secondary'}`}>
                             {showPayments ? 'Chiudi Pagamenti' : '💰 Gestione Pagamenti'}
                         </button>
-                        <button onClick={() => setShowUsers(!showUsers)} className={`btn ${showUsers ? 'btn-primary' : 'btn-secondary'}`}>
+                        <button onClick={() => setShowUsers(!showUsers)} style={{ flex: '1 1 auto', minWidth: 'max-content' }} className={`btn ${showUsers ? 'btn-primary' : 'btn-secondary'}`}>
                             {showUsers ? 'Chiudi Dipendenti' : '👥 Gestione Dipendenti'}
                         </button>
-                        <button onClick={() => setShowSettings(!showSettings)} className={`btn ${showSettings ? 'btn-primary' : 'btn-secondary'}`}>
+                        <button onClick={() => setShowSettings(!showSettings)} style={{ flex: '1 1 auto', minWidth: 'max-content' }} className={`btn ${showSettings ? 'btn-primary' : 'btn-secondary'}`}>
                             {showSettings ? 'Chiudi Settings' : '⚙️ Impostazioni'}
                         </button>
-                        <button onClick={handleLogout} className="btn btn-danger">
+                        <button onClick={handleLogout} style={{ flex: '1 1 auto', minWidth: 'max-content' }} className="btn btn-danger">
                             Esci
                         </button>
                     </div>
