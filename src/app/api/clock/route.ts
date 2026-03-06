@@ -9,7 +9,6 @@ export async function POST(request: Request) {
         const userId = formData.get('userId');
         const type = formData.get('type') as string;
         const image = formData.get('image') as File | null;
-        const customTimestamp = formData.get('timestamp') as string | null;
 
         if (!userId || !['IN', 'OUT'].includes(type || '')) {
             return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
@@ -33,7 +32,6 @@ export async function POST(request: Request) {
                 userId: Number(userId),
                 type,
                 photoUrl,
-                ...(customTimestamp ? { timestamp: new Date(customTimestamp) } : {}),
             },
         });
 
