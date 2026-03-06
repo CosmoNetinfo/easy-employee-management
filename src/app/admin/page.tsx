@@ -11,6 +11,7 @@ export default function Admin() {
     const [entries, setEntries] = useState<any[]>([]);
     const [users, setUsers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [isMounted, setIsMounted] = useState(false);
 
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
@@ -35,6 +36,7 @@ export default function Admin() {
             return;
         }
 
+        setIsMounted(true);
         fetchUsers();
         fetchEntries();
     }, []);
@@ -458,8 +460,9 @@ export default function Admin() {
                 <div className="card mb-8 animate-slide-up">
                     <h3 className="mb-4">📊 Statistiche Ore (Periodo)</h3>
                     <div style={{ width: '100%', height: 300 }}>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={summary.userSummaries}>
+                        {isMounted && (
+                            <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+                                <BarChart data={summary.userSummaries}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
                                 <XAxis
                                     dataKey="name"
@@ -491,7 +494,7 @@ export default function Admin() {
                                 </Bar>
                             </BarChart>
                         </ResponsiveContainer>
-                    </div>
+                    )}
                 </div>
 
                 {/* Filters & Table Section */}
@@ -707,7 +710,7 @@ export default function Admin() {
                         <div className="card animate-slide-up" style={{ width: '100%', maxWidth: '400px' }}>
                             <h3 className="mb-4">✏️ Modifica Timbratura</h3>
                             <p className="text-muted mb-4">
-                                Stai modificando l'orario per <strong>{editingEntry.user.name}</strong>
+                                Stai modificando l&apos;orario per <strong>{editingEntry.user.name}</strong>
                             </p>
 
                             <div className="mb-4">
@@ -742,6 +745,7 @@ export default function Admin() {
 
                 <div className="text-center mt-10" style={{ marginTop: '4rem', opacity: 0.5, fontSize: '0.85rem' }}>
                     Easy Employee Management &copy; {new Date().getFullYear()}
+                </div>
                 </div>
             </div>
         </main>

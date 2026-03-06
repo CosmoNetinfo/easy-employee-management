@@ -1,7 +1,6 @@
 const CACHE_NAME = 'easy-employee-v2';
 const urlsToCache = [
-    '/',
-    '/globals.css'
+    '/'
 ];
 
 self.addEventListener('install', event => {
