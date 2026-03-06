@@ -27,14 +27,20 @@ export default function Dashboard() {
     const router = useRouter();
 
     const fetchStatus = async (userId: number) => {
-        if (!navigator.onLine) return;
+        console.log('Fetching status for user:', userId);
+        if (!navigator.onLine) {
+            console.log('Offline: skipping status fetch');
+            return;
+        }
         try {
             const res = await fetch(`/api/status?userId=${userId}`);
+            if (!res.ok) throw new Error(`Status API error: ${res.status}`);
             const data = await res.json();
-            setStatus(data.status); // IN or OUT
+            console.log('Status received:', data);
+            setStatus(data.status); 
             setLastEntry(data.lastEntry);
         } catch (e) {
-            console.error(e);
+            console.error('Fetch status error:', e);
         }
     };
 
@@ -162,15 +168,19 @@ export default function Dashboard() {
             formData.append('image', compressedFile);
 
             try {
+                console.log('Sending clock entry to server...');
                 const res = await fetch('/api/clock', {
                     method: 'POST',
                     body: formData,
                 });
 
+                console.log('Server response status:', res.status);
                 if (res.ok) {
+                    console.log('Clock success, refreshing status...');
                     await fetchStatus(user.id);
                 } else {
-                    // Fallback to offline if server error
+                    const errorText = await res.text();
+                    console.error('Server returned error:', errorText);
                     throw new Error('Server error');
                 }
             } catch (err) {
@@ -191,7 +201,8 @@ export default function Dashboard() {
                 });
             }
         } catch (e) {
-            alert('Errore di connessione');
+            console.error('General clock error:', e);
+            alert('Errore di connessione o processamento immagine');
         } finally {
             setLoading(false);
             const input = document.getElementById('cameraInput') as HTMLInputElement;

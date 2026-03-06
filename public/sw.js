@@ -32,22 +32,26 @@ self.addEventListener('fetch', event => {
     // Skip cross-origin requests
     if (!event.request.url.startsWith(self.location.origin)) return;
 
-    // For API calls, always go to network (we handle offline in the UI)
+    // IMPORTANT: NEVER intercept API calls. Let the browser handle them naturally.
     if (event.request.url.includes('/api/')) {
-        return;
+        return; 
     }
 
     event.respondWith(
         caches.match(event.request)
             .then(response => {
+                // Return cached response if found
                 if (response) {
                     return response;
                 }
-                return fetch(event.request).catch(() => {
-                    // Fallback to offline index if navigation fails
+
+                // Otherwise fetch from network
+                return fetch(event.request).catch(err => {
+                    // If network fails and it's a page navigation, return dashboard/root
                     if (event.request.mode === 'navigate') {
                         return caches.match('/dashboard') || caches.match('/');
                     }
+                    throw err;
                 });
             })
     );
