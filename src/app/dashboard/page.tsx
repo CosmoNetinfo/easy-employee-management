@@ -1,14 +1,77 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { saveOfflineEntry, getAllOfflineEntries, deleteOfflineEntry } from '@/utils/offlineStore';
+
+interface User {
+    id: number;
+    name: string;
+    role: string;
+    profileImage?: string;
+}
+
+interface Entry {
+    id: number;
+    timestamp: string;
+    type: string;
+}
 
 export default function Dashboard() {
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState<User | null>(null);
     const [status, setStatus] = useState('LOADING'); // IN, OUT, LOADING
-    const [lastEntry, setLastEntry] = useState<any>(null);
+    const [lastEntry, setLastEntry] = useState<Entry | null>(null);
     const [loading, setLoading] = useState(false);
+    const [isSyncing, setIsSyncing] = useState(false);
+    const [isOnline, setIsOnline] = useState(true);
     const router = useRouter();
+
+    const fetchStatus = async (userId: number) => {
+        if (!navigator.onLine) return;
+        try {
+            const res = await fetch(`/api/status?userId=${userId}`);
+            const data = await res.json();
+            setStatus(data.status); // IN or OUT
+            setLastEntry(data.lastEntry);
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    const syncOfflineEntries = useCallback(async () => {
+        if (!navigator.onLine || !user || isSyncing) return;
+
+        const entries = await getAllOfflineEntries();
+        if (entries.length === 0) return;
+
+        setIsSyncing(true);
+        console.log(`Syncing ${entries.length} offline entries...`);
+
+        for (const entry of entries) {
+            try {
+                const formData = new FormData();
+                formData.append('userId', String(entry.userId));
+                formData.append('type', entry.type);
+                formData.append('timestamp', entry.timestamp);
+                formData.append('image', entry.imageBlob, `offline_${entry.timestamp}.jpg`);
+
+                const res = await fetch('/api/clock', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (res.ok) {
+                    await deleteOfflineEntry(entry.id!);
+                }
+            } catch (err) {
+                console.error('Sync failed for entry:', entry, err);
+                break; // Stop syncing if something goes wrong
+            }
+        }
+
+        setIsSyncing(false);
+        fetchStatus(user.id);
+    }, [user, isSyncing]);
 
     useEffect(() => {
         const stored = localStorage.getItem('user');
@@ -19,18 +82,28 @@ export default function Dashboard() {
         const parsedUser = JSON.parse(stored);
         setUser(parsedUser);
         fetchStatus(parsedUser.id);
-    }, []);
 
-    const fetchStatus = async (userId: number) => {
-        try {
-            const res = await fetch(`/api/status?userId=${userId}`);
-            const data = await res.json();
-            setStatus(data.status); // IN or OUT
-            setLastEntry(data.lastEntry);
-        } catch (e) {
-            console.error(e);
+        // Network status listeners
+        const handleOnline = () => {
+            setIsOnline(true);
+            syncOfflineEntries();
+        };
+        const handleOffline = () => setIsOnline(false);
+
+        window.addEventListener('online', handleOnline);
+        window.addEventListener('offline', handleOffline);
+        setIsOnline(navigator.onLine);
+
+        // Initial sync attempt
+        if (navigator.onLine) {
+            syncOfflineEntries();
         }
-    };
+
+        return () => {
+            window.removeEventListener('online', handleOnline);
+            window.removeEventListener('offline', handleOffline);
+        };
+    }, [syncOfflineEntries, router]);
 
     const handleNativeClock = async (type: 'IN' | 'OUT', file: File) => {
         if (!user) return;
@@ -61,6 +134,27 @@ export default function Dashboard() {
                 };
                 img.onerror = () => resolve(file);
             });
+
+            if (!navigator.onLine) {
+                // Offline Logic
+                await saveOfflineEntry({
+                    userId: user.id,
+                    type,
+                    timestamp: new Date().toISOString(),
+                    imageBlob: compressedFile,
+                    imageType: 'image/jpeg'
+                });
+                
+                alert('🔴 Offline: Timbratura salvata localmente. Verrà sincronizzata appena torni online.');
+                // Optimistic UI update
+                setStatus(type === 'IN' ? 'IN' : 'OUT');
+                setLastEntry({ 
+                    id: Date.now(), 
+                    timestamp: new Date().toISOString(),
+                    type: type
+                });
+                return;
+            }
 
             const formData = new FormData();
             formData.append('userId', user.id);
@@ -129,6 +223,7 @@ export default function Dashboard() {
             });
 
             if (res.ok) {
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const data = await res.json();
                 // 3. Update Local State
                 const updatedUser = { ...user, profileImage: base64Image };
@@ -159,6 +254,37 @@ export default function Dashboard() {
                     <div>
                         <h2 style={{ fontSize: '1.8rem', margin: 0, lineHeight: 1.2 }}>Ciao, <br />
                             <span style={{ color: 'var(--accent-dark)' }}>{user.name.split(' ')[0]}</span></h2>
+                        {/* Status Indicators */}
+                        <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+                            {!isOnline && (
+                                <span style={{ 
+                                    background: 'var(--danger)', 
+                                    color: 'white', 
+                                    fontSize: '0.7rem', 
+                                    padding: '2px 8px', 
+                                    borderRadius: '10px',
+                                    fontWeight: 'bold',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '4px'
+                                }}>
+                                    ● Offline
+                                </span>
+                            )}
+                            {isSyncing && (
+                                <span style={{ 
+                                    background: 'var(--primary)', 
+                                    color: 'white', 
+                                    fontSize: '0.7rem', 
+                                    padding: '2px 8px', 
+                                    borderRadius: '10px',
+                                    fontWeight: 'bold',
+                                    animation: 'pulse 1.5s infinite'
+                                }}>
+                                    Sincronizzazione...
+                                </span>
+                            )}
+                        </div>
                     </div>
                     {/* User Profile Pic - Clickable */}
                     <div style={{ position: 'relative' }}>
@@ -213,8 +339,8 @@ export default function Dashboard() {
                 {/* 2. Status Sphere */}
                 <div style={{ margin: '2rem 0', display: 'flex', justifyContent: 'center' }}>
                     {status === 'LOADING' ? (
-                        <div className="status-sphere" style={{ background: '#f1f5f9' }}>
-                            <span style={{ color: '#94a3b8' }}>Caricamento...</span>
+                        <div className="status-sphere" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                            <span style={{ color: 'var(--text-muted)' }}>{isSyncing ? 'Sincronizzazione...' : 'Caricamento...'}</span>
                         </div>
                     ) : status === 'IN' ? (
                         <div className="status-sphere sphere-in">
