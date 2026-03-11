@@ -175,6 +175,25 @@ export default function Admin() {
         }
     };
 
+    const handleDeleteUser = async (userId: number, userName: string) => {
+        if (!confirm(`Sei sicuro di voler eliminare DEFINITIVAMENTE il dipendente ${userName}? 
+Attenzione: verranno cancellate anche tutte le sue timbrature e i suoi pagamenti.`)) return;
+
+        try {
+            const res = await fetch(`/api/admin/delete-user?id=${userId}`, { method: 'DELETE' });
+            if (res.ok) {
+                fetchUsers();
+                fetchEntries();
+                alert('Dipendente eliminato con successo');
+            } else {
+                const data = await res.json();
+                alert(data.error || 'Errore durante l\'eliminazione');
+            }
+        } catch (error) {
+            alert('Errore di connessione');
+        }
+    };
+
     const handleEditClick = (entry: any) => {
         setEditingEntry(entry);
         // Format date for datetime-local input (YYYY-MM-DDTHH:mm)
@@ -414,19 +433,31 @@ export default function Admin() {
                                         <div className="font-bold" style={{ fontSize: '1.1rem' }}>{u.name}</div>
                                         <div className="text-muted" style={{ fontSize: '0.85rem' }}>Matricola: {u.code}</div>
                                     </div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                        <label className="text-muted" style={{ fontSize: '0.9rem' }}>€/h</label>
-                                        <input
-                                            type="number"
-                                            defaultValue={u.hourlyWage || 7}
-                                            onBlur={(e) => {
-                                                const val = e.target.value;
-                                                if (parseFloat(val) !== u.hourlyWage) {
-                                                    handleUpdateWage(u.id, val);
-                                                }
-                                            }}
-                                            style={{ width: '80px', textAlign: 'right', fontWeight: 'bold' }}
-                                        />
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                                            <label className="text-muted" style={{ fontSize: '0.8rem' }}>€/h</label>
+                                            <input
+                                                type="number"
+                                                defaultValue={u.hourlyWage || 7}
+                                                onBlur={(e) => {
+                                                    const val = e.target.value;
+                                                    if (parseFloat(val) !== u.hourlyWage) {
+                                                        handleUpdateWage(u.id, val);
+                                                    }
+                                                }}
+                                                style={{ width: '70px', textAlign: 'right', fontWeight: 'bold', padding: '8px' }}
+                                            />
+                                        </div>
+                                        {u.id !== 1 && (
+                                            <button
+                                                onClick={() => handleDeleteUser(u.id, u.name)}
+                                                className="btn btn-ghost"
+                                                style={{ color: 'var(--danger)', padding: '8px', minWidth: 'auto' }}
+                                                title="Elimina Dipendente"
+                                            >
+                                                🗑️
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             ))}
