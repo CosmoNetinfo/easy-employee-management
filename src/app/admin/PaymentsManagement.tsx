@@ -42,6 +42,31 @@ export default function PaymentsManagement({ users }: PaymentsManagementProps) {
         fetchAllPayments();
     }, []);
 
+    useEffect(() => {
+        const calculateAmount = async () => {
+            if (selectedUserId && periodStart && periodEnd) {
+                try {
+                    const params = new URLSearchParams({
+                        userId: selectedUserId,
+                        periodStart,
+                        periodEnd
+                    });
+                    const res = await fetch(`/api/payments/calculate?${params.toString()}`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        setAmount(data.amount.toString());
+                    }
+                } catch (error) {
+                    console.error('Error calculating amount:', error);
+                }
+            }
+        };
+
+        if (showAddForm) {
+            calculateAmount();
+        }
+    }, [selectedUserId, periodStart, periodEnd, showAddForm]);
+
     const fetchAllPayments = async () => {
         setLoading(true);
         try {
